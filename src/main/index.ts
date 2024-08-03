@@ -6,9 +6,12 @@ import icon from '../../resources/icon.png?asset'
 let mainWindow: BrowserWindow
 
 const pinWindow = (pin: boolean): void => {
-  console.log('main got pin state', pin)
-
-  mainWindow.setAlwaysOnTop(pin, 'floating')
+  console.log('main got pin state: ', pin)
+  if (pin) {
+    mainWindow.setAlwaysOnTop(pin, 'floating')
+  } else {
+    mainWindow.setAlwaysOnTop(pin, 'normal')
+  }
 }
 
 function createWindow(): void {
