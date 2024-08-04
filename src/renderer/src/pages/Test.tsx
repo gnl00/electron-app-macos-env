@@ -19,29 +19,55 @@ import {
 import { Input } from '@renderer/components/ui/input'
 import { Label } from '@renderer/components/ui/label'
 import { Toggle } from '@renderer/components/ui/toggle'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
+import { PIN_WINDOW, GET_CONFIG } from '../../../constants'
+import { IAppConfig } from '../../../types'
+// import { useEffectOnce } from 'react-use'
 
 const Test = (): JSX.Element => {
   const [pinState, setPinState] = useState<boolean>(false)
+  const [appConfig, setAppConfig] = useState<IAppConfig>()
+
+  useEffect(() => {
+    console.log('log once time')
+
+    // get config from main
+    window.electron.ipcRenderer.invoke(GET_CONFIG).then((config: IAppConfig) => {
+      console.log('got from main: ', config)
+      setAppConfig(config)
+    })
+    // console.log('got config from main: ', localConfig)
+  }, [])
 
   const onPinToggleClick = (): void => {
     setPinState(!pinState)
 
-    // TODO pin window
-    window.electron.ipcRenderer.invoke('pin-window', !pinState)
+    // pin window
+    window.electron.ipcRenderer.invoke(PIN_WINDOW, !pinState)
+  }
+
+  const onConfigurationsChange = (config): void => {
+    setAppConfig(config)
+  }
+
+  const saveConfigurationClick = (): void => {
+    console.log('save configurations click')
+
+    console.log('configurations to save: ', appConfig)
+    // TODO add Toast
   }
 
   return (
     <>
-      <div className="m-2">
-        <div className="flex justify-between w-full space-x-2">
+      <div className="m-2 app-dragable">
+        <div style={{}} className="flex justify-between w-full space-x-2">
           <Popover>
-            <PopoverTrigger>
+            <PopoverTrigger className="app-undragable">
               <div className="h-8 rounded-md px-3 border hover:bg-accent hover:text-accent-foreground flex items-center">
                 <GearIcon />
               </div>
             </PopoverTrigger>
-            <PopoverContent className="m-2 w-full">
+            <PopoverContent className="m-2 w-full app-undragable">
               <div className="grid gap-4">
                 <div className="space-y-2">
                   <h4 className="font-medium leading-none">Prefernces</h4>
@@ -53,6 +79,7 @@ const Test = (): JSX.Element => {
                       <span>
                         Token
                         <Button size={'round'} variant={'ghost'}>
+                          {/* TODO add ToolTip */}
                           <QuestionMarkCircledIcon></QuestionMarkCircledIcon>
                         </Button>
                       </span>
@@ -60,7 +87,11 @@ const Test = (): JSX.Element => {
                     <Input
                       id="token"
                       placeholder="Please input your token"
+                      defaultValue={appConfig?.token}
                       className="col-span-2 h-8"
+                      onChange={(event) =>
+                        onConfigurationsChange({ ...appConfig, token: event.target.value })
+                      }
                     />
                   </div>
                   <div className="grid grid-cols-3 items-center gap-4">
@@ -68,27 +99,44 @@ const Test = (): JSX.Element => {
                     <Input
                       id="api"
                       className="col-span-2 h-8 text-xs"
+                      defaultValue={appConfig?.api}
                       placeholder="server:port/chat/v1/x"
+                      onChange={(event) =>
+                        onConfigurationsChange({ ...appConfig, api: event.target.value })
+                      }
+                    />
+                  </div>
+                  <div className="grid grid-cols-3 items-center gap-4">
+                    <Label htmlFor="prompt">Translate Prompt</Label>
+                    <Textarea
+                      id="prompt"
+                      className="col-span-2 h-8 text-xs"
+                      defaultValue={appConfig?.prompt}
+                      onChange={(event) =>
+                        onConfigurationsChange({ ...appConfig, prompt: event.target.value })
+                      }
                     />
                   </div>
                 </div>
-                <Button size="xs">Save Configurations</Button>
+                <Button size="xs" onClick={saveConfigurationClick}>
+                  Save Configurations
+                </Button>
               </div>
             </PopoverContent>
           </Popover>
-          <Toggle size="xs" variant="outline" onClick={onPinToggleClick}>
+          <Toggle className="app-undragable" size="xs" variant="outline" onClick={onPinToggleClick}>
             {pinState ? <DrawingPinFilledIcon /> : <DrawingPinIcon />}
           </Toggle>
         </div>
         <Separator style={{ margin: '10px 0' }} />
-        <div className="flex w-full items-end space-x-2">
-          <Textarea className="bg-slate-50" placeholder="translate context" />
+        <div className="app-undragable flex w-full items-end space-x-2">
+          <Textarea className="bg-slate-50" placeholder="Translate context" />
           <Button size="sm" type="submit">
             Submit
           </Button>
         </div>
         <br></br>
-        <ScrollArea className="h-96 min-h-1/3 w-full rounded-md border p-4">
+        <ScrollArea className="app-undragable h-96 min-h-1/3 w-full rounded-md border p-4">
           <Accordion type="multiple" defaultValue={['item-1', 'item-2', 'item-3']}>
             <AccordionItem value="item-1" data-state="open">
               <AccordionTrigger>

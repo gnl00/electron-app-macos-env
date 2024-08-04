@@ -2,6 +2,14 @@
 @tailwind components;
 @tailwind utilities;
 
+.app-dragable {
+  -webkit-app-region: drag;
+}
+
+.app-undragable {
+  -webkit-app-region: none;
+}
+
 @layer base {
   :root {
     --background: 0 0% 100%;

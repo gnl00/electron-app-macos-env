@@ -1,17 +1,54 @@
 import { app, shell, BrowserWindow, ipcMain } from 'electron'
 import { join } from 'path'
+import fs from 'node:fs'
 import { electronApp, optimizer, is } from '@electron-toolkit/utils'
 import icon from '../../resources/icon.png?asset'
+import { PIN_WINDOW, SAVE_CONFIG, GET_CONFIG } from '../constants'
+import { defaultConfig } from '../config'
+import { IAppConfig } from '../types'
 
 let mainWindow: BrowserWindow
+let appConfig: IAppConfig
+
+const configPath = app.getPath('userData')
+const configFile = join(configPath, 'appConfig.json')
+
+function tryInitConfig(): void {
+  if (!fs.existsSync(configPath)) {
+    console.log('no local config PATH exist, creating...', configPath)
+    fs.mkdirSync(configPath)
+  }
+
+  if (!fs.existsSync(configFile)) {
+    console.log('no local config FILE exist, creating...', configFile)
+    fs.writeFileSync(configFile, JSON.stringify({ ...defaultConfig }, null, 2))
+  }
+}
+
+function handleConfig(): void {
+  console.log('handling configurations...')
+  tryInitConfig()
+
+  console.log('get configurations from local: ', configFile)
+  const jsonStr = fs.readFileSync(configFile).toString('utf8')
+  const configJson = JSON.parse(jsonStr)
+  if (configJson) {
+    appConfig = configJson
+    console.log('got local config', appConfig)
+  }
+}
+
+const saveConfig = (configData: IAppConfig): void => {
+  console.log('configurations saving:', configData)
+  fs.writeFileSync(configFile, JSON.stringify({ ...defaultConfig, ...configData }, null, 2))
+  console.log('configurations save success')
+}
+
+handleConfig()
 
 const pinWindow = (pin: boolean): void => {
   console.log('main got pin state: ', pin)
-  if (pin) {
-    mainWindow.setAlwaysOnTop(pin, 'floating')
-  } else {
-    mainWindow.setAlwaysOnTop(pin, 'normal')
-  }
+  mainWindow.setAlwaysOnTop(pin, 'floating')
 }
 
 function createWindow(): void {
@@ -21,7 +58,7 @@ function createWindow(): void {
     height: 670,
     show: false,
     // alwaysOnTop: true,
-    // frame: false,
+    frame: false,
     autoHideMenuBar: true,
     ...(process.platform === 'linux' ? { icon } : {}),
     webPreferences: {
@@ -46,6 +83,8 @@ function createWindow(): void {
   } else {
     mainWindow.loadFile(join(__dirname, '../renderer/index.html'))
   }
+
+  mainWindow.webContents.openDevTools()
 }
 
 // This method will be called when Electron has finished
@@ -62,8 +101,16 @@ app.whenReady().then(() => {
     optimizer.watchWindowShortcuts(window)
   })
 
+  // get config
+  // macOS  /Users/{USERNAME}/Library/'Application Support'/electron-app
+  // Linux /home/{USERNAME}/.local/electron-app
+  // Linux /home/{USERNAME}/.config/electron-app
+  console.log(app.getPath('userData'))
+
   // IPC test
-  ipcMain.handle('pin-window', (_, arg) => pinWindow(arg))
+  ipcMain.handle(PIN_WINDOW, (_, pinState) => pinWindow(pinState))
+  ipcMain.handle(SAVE_CONFIG, (_, config) => saveConfig(config))
+  ipcMain.handle(GET_CONFIG, (): IAppConfig => appConfig)
   ipcMain.on('ping', () => console.log('pong'))
 
   createWindow()
