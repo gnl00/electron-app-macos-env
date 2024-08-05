@@ -103,7 +103,6 @@ app.whenReady().then(() => {
 
   // get config
   // macOS  /Users/{USERNAME}/Library/'Application Support'/electron-app
-  // Linux /home/{USERNAME}/.local/electron-app
   // Linux /home/{USERNAME}/.config/electron-app
   console.log(app.getPath('userData'))
 
