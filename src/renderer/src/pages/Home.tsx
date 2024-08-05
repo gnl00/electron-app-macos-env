@@ -19,17 +19,21 @@ import {
 import { Input } from '@renderer/components/ui/input'
 import { Label } from '@renderer/components/ui/label'
 import { Toggle } from '@renderer/components/ui/toggle'
+import { useToast } from "@renderer/components/ui/use-toast"
+import { Toaster } from "@renderer/components/ui/toaster"
 import { useEffect, useState } from 'react'
 import { PIN_WINDOW, GET_CONFIG } from '@constants/index'
 import { IAppConfig } from '@types.d/index'
 // import { useEffectOnce } from 'react-use'
 
 const Home = (): JSX.Element => {
+
   const [pinState, setPinState] = useState<boolean>(false)
   const [appConfig, setAppConfig] = useState<IAppConfig>()
-  useEffect(() => {
-    console.log('log once time')
 
+  const { toast } = useToast()
+
+  useEffect(() => {
     // get config from main
     window.electron.ipcRenderer.invoke(GET_CONFIG).then((config: IAppConfig) => {
       console.log('got from main: ', config)
@@ -53,7 +57,14 @@ const Home = (): JSX.Element => {
     console.log('save configurations click')
 
     console.log('configurations to save: ', appConfig)
-    // TODO add Toast
+    toast({
+      className: 'top-0 right-0 flex fixed md:max-w-[360px] md:top-4 md:right-4',
+      variant: 'default',
+      // title: 'Save Configuration',
+      description: 'Save configurations success!',
+      duration: 800
+      // action: <ToastAction altText="Try again">Try again</ToastAction>
+    })
   }
 
   return (
@@ -204,6 +215,7 @@ const Home = (): JSX.Element => {
             </AccordionItem>
           </Accordion>
         </ScrollArea>
+        <Toaster />
       </div>
     </>
   )
