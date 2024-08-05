@@ -5,7 +5,9 @@
     "baseUrl": ".",
     "paths": {
       "@/*": ["./src/*"],
-      "@renderer/*": ["./src/renderer/src/*"]
+      "@renderer/*": ["./src/renderer/src/*"],
+      "@constants/*": ["./src/constants/*"],
+      "@types.d/*": ["./src/types/*"]
     }
   }
 }
