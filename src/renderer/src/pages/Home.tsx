@@ -24,7 +24,7 @@ import { PIN_WINDOW, GET_CONFIG } from '@constants/index'
 import { IAppConfig } from '@types.d/index'
 // import { useEffectOnce } from 'react-use'
 
-const Test = (): JSX.Element => {
+const Home = (): JSX.Element => {
   const [pinState, setPinState] = useState<boolean>(false)
   const [appConfig, setAppConfig] = useState<IAppConfig>()
   useEffect(() => {
@@ -209,4 +209,4 @@ const Test = (): JSX.Element => {
   )
 }
 
-export default Test
+export default Home

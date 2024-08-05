@@ -1,9 +1,9 @@
-import Test from '@renderer/pages/Test'
+import Home from '@renderer/pages/Home'
 
 function App(): JSX.Element {
   return (
     <>
-      <Test />
+      <Home />
     </>
   )
 }
