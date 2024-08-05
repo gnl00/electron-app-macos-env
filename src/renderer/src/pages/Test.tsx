@@ -20,14 +20,13 @@ import { Input } from '@renderer/components/ui/input'
 import { Label } from '@renderer/components/ui/label'
 import { Toggle } from '@renderer/components/ui/toggle'
 import { useEffect, useState } from 'react'
-import { PIN_WINDOW, GET_CONFIG } from '../../../constants'
-import { IAppConfig } from '../../../types'
+import { PIN_WINDOW, GET_CONFIG } from '@constants/index'
+import { IAppConfig } from '@types.d/index'
 // import { useEffectOnce } from 'react-use'
 
 const Test = (): JSX.Element => {
   const [pinState, setPinState] = useState<boolean>(false)
   const [appConfig, setAppConfig] = useState<IAppConfig>()
-
   useEffect(() => {
     console.log('log once time')
 
