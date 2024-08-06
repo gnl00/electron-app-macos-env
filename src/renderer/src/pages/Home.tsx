@@ -29,14 +29,20 @@ import {
 } from "@renderer/components/ui/tooltip"
 import { useEffect, useState } from 'react'
 import { PIN_WINDOW, GET_CONFIG, OPEN_EXTERNAL, SAVE_CONFIG } from '@constants/index'
-import { IAppConfig } from '@types.d/index'
+import { IAppConfig, ITranslateRequest } from '@types.d/index'
+import { translateRequest } from '@request/index'
 
 // import { useEffectOnce } from 'react-use'
 
 const Home = (): JSX.Element => {
 
   const [pinState, setPinState] = useState<boolean>(false)
-  const [appConfig, setAppConfig] = useState<IAppConfig>()
+  const [appConfig, setAppConfig] = useState<IAppConfig>({
+    api: 'https://api.siliconflow.cn/v1/chat/completions',
+    token: '',
+    prompt: '',
+    model: 'Qwen/Qwen2-7B-Instruct'
+  })
   const [translateText, setTranslateText] = useState<string>('')
 
   const { toast } = useToast()
@@ -45,7 +51,10 @@ const Home = (): JSX.Element => {
     // get config from main
     window.electron.ipcRenderer.invoke(GET_CONFIG).then((config: IAppConfig) => {
       // console.log('got from main: ', config)
-      setAppConfig(config)
+      setAppConfig({
+        ...appConfig,
+        ...config
+      })
     })
   }, [])
 
@@ -57,7 +66,10 @@ const Home = (): JSX.Element => {
   }
 
   const onConfigurationsChange = (config): void => {
-    setAppConfig(config)
+    setAppConfig({
+      ...appConfig,
+        ...config
+    })
   }
 
   const saveConfigurationClick = (): void => {
@@ -92,6 +104,15 @@ const Home = (): JSX.Element => {
 
   const onSubmitClick = (): void => {
     console.log('translateText', translateText)
+    const req: ITranslateRequest = {
+      url: appConfig.api,
+      text: translateText,
+      token: appConfig.token,
+      prompt: appConfig.prompt,
+      model: appConfig.model
+    }
+    const result = translateRequest(req)
+    console.log('translate result: ', result);
   }
 
   return (
@@ -118,7 +139,8 @@ const Home = (): JSX.Element => {
                         <Button size={'round'} variant={'ghost'}>
                           <TooltipProvider>
                             <Tooltip>
-                              <TooltipTrigger>
+                              {/* asChild fix validateDOMNesting(...): <button> cannot appear as a descendant of <button>. */}
+                              <TooltipTrigger asChild>
                                 <QuestionMarkCircledIcon onTouchMoveCapture={onTokenQuestionHover} onClick={onTokenQuestionClick}></QuestionMarkCircledIcon>
                               </TooltipTrigger>
                               <TooltipContent>
