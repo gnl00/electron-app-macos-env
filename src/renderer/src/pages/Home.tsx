@@ -21,25 +21,32 @@ import { Label } from '@renderer/components/ui/label'
 import { Toggle } from '@renderer/components/ui/toggle'
 import { useToast } from "@renderer/components/ui/use-toast"
 import { Toaster } from "@renderer/components/ui/toaster"
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@renderer/components/ui/tooltip"
 import { useEffect, useState } from 'react'
-import { PIN_WINDOW, GET_CONFIG } from '@constants/index'
+import { PIN_WINDOW, GET_CONFIG, OPEN_EXTERNAL, SAVE_CONFIG } from '@constants/index'
 import { IAppConfig } from '@types.d/index'
+
 // import { useEffectOnce } from 'react-use'
 
 const Home = (): JSX.Element => {
 
   const [pinState, setPinState] = useState<boolean>(false)
   const [appConfig, setAppConfig] = useState<IAppConfig>()
+  const [translateText, setTranslateText] = useState<string>('')
 
   const { toast } = useToast()
 
   useEffect(() => {
     // get config from main
     window.electron.ipcRenderer.invoke(GET_CONFIG).then((config: IAppConfig) => {
-      console.log('got from main: ', config)
+      // console.log('got from main: ', config)
       setAppConfig(config)
     })
-    // console.log('got config from main: ', localConfig)
   }, [])
 
   const onPinToggleClick = (): void => {
@@ -55,16 +62,36 @@ const Home = (): JSX.Element => {
 
   const saveConfigurationClick = (): void => {
     console.log('save configurations click')
-
+    window.electron.ipcRenderer.invoke(SAVE_CONFIG, appConfig)
     console.log('configurations to save: ', appConfig)
     toast({
       className: 'top-0 right-0 flex fixed md:max-w-[360px] md:top-4 md:right-4',
       variant: 'default',
       // title: 'Save Configuration',
-      description: 'Save configurations success!',
+      description: '✅ Save configurations success',
       duration: 800
       // action: <ToastAction altText="Try again">Try again</ToastAction>
     })
+  }
+
+  const onTokenQuestionClick = (): void => {
+    console.log('token question click');
+    
+    // window.electron.ipcRenderer.openex
+    // shell.openExternal('www.baidu.com')
+    window.electron.ipcRenderer.invoke(OPEN_EXTERNAL, 'https://cloud.siliconflow.cn/account/ak')
+  }
+
+  const onTokenQuestionHover = () => {
+    console.log('hover');
+  }
+
+  const onTranslateTextChange = (evt) => {
+    setTranslateText(evt.target.value)
+  }
+
+  const onSubmitClick = (): void => {
+    console.log('translateText', translateText)
   }
 
   return (
@@ -89,8 +116,16 @@ const Home = (): JSX.Element => {
                       <span>
                         Token
                         <Button size={'round'} variant={'ghost'}>
-                          {/* TODO add ToolTip */}
-                          <QuestionMarkCircledIcon></QuestionMarkCircledIcon>
+                          <TooltipProvider>
+                            <Tooltip>
+                              <TooltipTrigger>
+                                <QuestionMarkCircledIcon onTouchMoveCapture={onTokenQuestionHover} onClick={onTokenQuestionClick}></QuestionMarkCircledIcon>
+                              </TooltipTrigger>
+                              <TooltipContent>
+                                <p>Click to get token from <strong>siliconflow</strong></p>
+                              </TooltipContent>
+                            </Tooltip>
+                          </TooltipProvider>
                         </Button>
                       </span>
                     </Label>
@@ -140,8 +175,8 @@ const Home = (): JSX.Element => {
         </div>
         <Separator style={{ margin: '10px 0' }} />
         <div className="app-undragable flex w-full items-end space-x-2">
-          <Textarea className="bg-slate-50" placeholder="Translate context" />
-          <Button size="sm" type="submit">
+          <Textarea onChange={onTranslateTextChange} className="bg-slate-50" placeholder="Translate context" />
+          <Button size="sm" type="submit" onClick={onSubmitClick}>
             Submit
           </Button>
         </div>
