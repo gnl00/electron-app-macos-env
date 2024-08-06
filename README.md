@@ -7,5 +7,8 @@
 ![ss-2](./screenshot/image-2.png)
 
 ## TODO
-- [ ] api quetsion tooltip
-- [ ] save configuration toast
+- [x] api quetsion tooltip
+- [x] save configuration toast
+- [ ] send translate requets
+- [ ] add `translating`
+- [ ] use StreamEvent
