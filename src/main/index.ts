@@ -3,7 +3,7 @@ import { join } from 'path'
 import fs from 'node:fs'
 import { electronApp, optimizer, is } from '@electron-toolkit/utils'
 import icon from '../../resources/icon.png?asset'
-import { PIN_WINDOW, SAVE_CONFIG, GET_CONFIG } from '../constants'
+import { PIN_WINDOW, SAVE_CONFIG, GET_CONFIG, OPEN_EXTERNAL } from '../constants'
 import { defaultConfig } from '../config'
 import { IAppConfig } from '../types'
 
@@ -71,10 +71,10 @@ function createWindow(): void {
     mainWindow.show()
   })
 
-  mainWindow.webContents.setWindowOpenHandler((details) => {
-    shell.openExternal(details.url)
-    return { action: 'deny' }
-  })
+  // mainWindow.webContents.setWindowOpenHandler((details) => {
+  //   shell.openExternal(details.url)
+  //   return { action: 'deny' }
+  // })
 
   // HMR for renderer base on electron-vite cli.
   // Load the remote URL for development or the local html file for production.
@@ -84,7 +84,7 @@ function createWindow(): void {
     mainWindow.loadFile(join(__dirname, '../renderer/index.html'))
   }
 
-  mainWindow.webContents.openDevTools()
+  mainWindow.webContents.openDevTools({ mode: 'right' })
 }
 
 // This method will be called when Electron has finished
@@ -110,6 +110,10 @@ app.whenReady().then(() => {
   ipcMain.handle(PIN_WINDOW, (_, pinState) => pinWindow(pinState))
   ipcMain.handle(SAVE_CONFIG, (_, config) => saveConfig(config))
   ipcMain.handle(GET_CONFIG, (): IAppConfig => appConfig)
+  ipcMain.handle(OPEN_EXTERNAL, (_, url) => {
+    console.log('main received url', url);
+    shell.openExternal(url)
+  })
   ipcMain.on('ping', () => console.log('pong'))
 
   createWindow()
