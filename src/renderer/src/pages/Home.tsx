@@ -29,8 +29,9 @@ import {
 } from "@renderer/components/ui/tooltip"
 import { useEffect, useState } from 'react'
 import { PIN_WINDOW, GET_CONFIG, OPEN_EXTERNAL, SAVE_CONFIG } from '@constants/index'
-import { IAppConfig, ITranslateRequest } from '@types.d/index'
+import { IAppConfig, IBaseResponse, ITranslateRequest } from '@types.d/index'
 import { translateRequestWithHook } from '@request/index'
+import ReactMarkdown from 'react-markdown'
 // import { useEffectOnce } from 'react-use'
 
 const Home = (): JSX.Element => {
@@ -44,6 +45,8 @@ const Home = (): JSX.Element => {
   })
   const [translateText, setTranslateText] = useState<string>('')
   const [fetching, setFetchingState] = useState<boolean>(false)
+  const [translateResult, setTranslateResult] = useState<string>()
+  const [defaultOpenValue, setDefaultOpenValue] = useState<string>('item-0')
 
   const { toast } = useToast()
 
@@ -73,7 +76,6 @@ const Home = (): JSX.Element => {
   }
 
   const saveConfigurationClick = (): void => {
-    console.log('save configurations click')
     window.electron.ipcRenderer.invoke(SAVE_CONFIG, appConfig)
     console.log('configurations to save: ', appConfig)
     toast({
@@ -94,23 +96,26 @@ const Home = (): JSX.Element => {
     window.electron.ipcRenderer.invoke(OPEN_EXTERNAL, 'https://cloud.siliconflow.cn/account/ak')
   }
 
-  const onTokenQuestionHover = () => {
-    console.log('hover');
-  }
-
   const onTranslateTextChange = (evt) => {
     setTranslateText(evt.target.value)
   }
 
-  const startFetch = () => {
+  const beforeFetch = () => {
     setFetchingState(true)
   }
 
-  const endFetch = () => {
+  const afterFetch = () => {
     setFetchingState(false)
   }
 
   const onSubmitClick = async (): Promise<void> => {
+    if (!translateText) {
+      return
+    }
+
+    // set result empty first
+    setTranslateResult('')
+
     console.log('translateText', translateText)
     const req: ITranslateRequest = {
       url: appConfig.api,
@@ -120,13 +125,14 @@ const Home = (): JSX.Element => {
       model: appConfig.model
     }
 
-    while (fetching) {
-      console.log('fetching...', new Date().getTime())
-    }
-
-    const result = await translateRequestWithHook(req, startFetch, endFetch)
-
+    const result: IBaseResponse = await translateRequestWithHook(req, beforeFetch, afterFetch)
     console.log('translate result: ', result);
+
+    const resultText = result.choices[0].message.content
+    setTranslateResult(resultText)
+
+    // just...not work
+    setDefaultOpenValue('item-0')
   }
 
   return (
@@ -155,7 +161,7 @@ const Home = (): JSX.Element => {
                             <Tooltip>
                               {/* asChild fix validateDOMNesting(...): <button> cannot appear as a descendant of <button>. */}
                               <TooltipTrigger asChild>
-                                <QuestionMarkCircledIcon onTouchMoveCapture={onTokenQuestionHover} onClick={onTokenQuestionClick}></QuestionMarkCircledIcon>
+                                <QuestionMarkCircledIcon onClick={onTokenQuestionClick}></QuestionMarkCircledIcon>
                               </TooltipTrigger>
                               <TooltipContent>
                                 <p>Click to get token from <strong>siliconflow</strong></p>
@@ -217,80 +223,37 @@ const Home = (): JSX.Element => {
           </Button>
         </div>
         <br></br>
-        {
-          fetching ? <>
-            <div className='flex'>
-              <Separator className='w-1/2' style={{ margin: '10px 0' }} />
-              <span className='text-xs text-slate-500'>translating...</span>
-              <Separator className='w-1/2' style={{ margin: '10px 0' }} />
-            </div>
-          </> : <></>
-        }
-        <ScrollArea className="app-undragable h-96 min-h-1/3 w-full rounded-md border p-4">
-          <Accordion type="multiple" defaultValue={['item-1', 'item-2', 'item-3']}>
-            <AccordionItem value="item-1" data-state="open">
+        <div className='w-full'>
+          {
+            fetching ? 
+            <>
+              <div className='flex justify-center'>
+                <Separator className='w-1/3' style={{ margin: '10px 0' }} />
+                <span className='text-xs text-slate-500'>Translating</span>
+                <Separator className='w-1/3' style={{ margin: '10px 0' }} />
+              </div>
+            </> : 
+            <>
+              <div className='flex justify-center'>
+                <Separator className='w-1/3' style={{ margin: '5px 0' }} />
+                <span className='text-xs text-slate-400'>&nbsp;</span>
+                <Separator className='w-1/3' style={{ margin: '5px 0' }} />
+              </div>
+            </>
+          }
+        </div>
+        <ScrollArea className="app-undragable h-96 w-full rounded-md border p-4">
+          <Accordion type="single" defaultValue={defaultOpenValue} collapsible>
+            <AccordionItem value="item-0">
               <AccordionTrigger>
-                <Badge variant="outline-slate">THUDM/glm-4-9b-chat</Badge>
+                <Badge variant="outline-slate">{appConfig.model}</Badge>
               </AccordionTrigger>
               <AccordionContent>
-                Yes. It adheres to the WAI-ARIA design pattern. Yes. It adheres to the WAI-ARIA
-                design pattern. Yes. It adheres to the WAI-ARIA design pattern. Yes. It adheres to
-                the WAI-ARIA design pattern. Yes. It adheres to the WAI-ARIA design pattern.
-              </AccordionContent>
-            </AccordionItem>
-
-            <AccordionItem value="item-2">
-              <AccordionTrigger>
-                <Badge variant="outline-slate">Qwen/Qwen2-7B-Instruct</Badge>
-              </AccordionTrigger>
-              <AccordionContent>
-                Yes. It adheres to the WAI-ARIA design pattern. Yes. It adheres to the WAI-ARIA
-                design pattern. Yes. It adheres to the WAI-ARIA design pattern. Yes. It adheres to
-                the WAI-ARIA design pattern. Yes. It adheres to the WAI-ARIA design pattern.
-              </AccordionContent>
-            </AccordionItem>
-
-            <AccordionItem value="item-3">
-              <AccordionTrigger>
-                <Badge variant="outline-slate">Qwen/Qwen2-1.5B-Instruct (32K)</Badge>
-              </AccordionTrigger>
-              <AccordionContent>
-                Yes. It adheres to the WAI-ARIA design pattern. Yes. It adheres to the WAI-ARIA
-                design pattern. Yes. It adheres to the WAI-ARIA design pattern. Yes. It adheres to
-                the WAI-ARIA design pattern. Yes. It adheres to the WAI-ARIA design pattern.
-              </AccordionContent>
-            </AccordionItem>
-
-            <AccordionItem value="item-4">
-              <AccordionTrigger>
-                <Badge variant="outline-slate">Qwen/Qwen1.5-7B-Chat (32K)</Badge>
-              </AccordionTrigger>
-              <AccordionContent>
-                Yes. It adheres to the WAI-ARIA design pattern. Yes. It adheres to the WAI-ARIA
-                design pattern. Yes. It adheres to the WAI-ARIA design pattern. Yes. It adheres to
-                the WAI-ARIA design pattern. Yes. It adheres to the WAI-ARIA design pattern.
-              </AccordionContent>
-            </AccordionItem>
-
-            <AccordionItem value="item-5">
-              <AccordionTrigger>
-                <Badge variant="outline-slate">01-ai/Yi-1.5-9B-Chat-32K (32K)</Badge>
-              </AccordionTrigger>
-              <AccordionContent>
-                Yes. It adheres to the WAI-ARIA design pattern. Yes. It adheres to the WAI-ARIA
-                design pattern. Yes. It adheres to the WAI-ARIA design pattern. Yes. It adheres to
-                the WAI-ARIA design pattern. Yes. It adheres to the WAI-ARIA design pattern.
-              </AccordionContent>
-            </AccordionItem>
-
-            <AccordionItem value="item-6">
-              <AccordionTrigger>
-                <Badge variant="outline-slate">01-ai/Yi-1.5-9B-Chat-16K (16K)</Badge>
-              </AccordionTrigger>
-              <AccordionContent>
-                Yes. It adheres to the WAI-ARIA design pattern. Yes. It adheres to the WAI-ARIA
-                design pattern. Yes. It adheres to the WAI-ARIA design pattern. Yes. It adheres to
-                the WAI-ARIA design pattern. Yes. It adheres to the WAI-ARIA design pattern.
+                <article className="prose lg:prose-xl">
+                  <ReactMarkdown>
+                    {translateResult}
+                  </ReactMarkdown>
+                </article>
               </AccordionContent>
             </AccordionItem>
           </Accordion>

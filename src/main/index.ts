@@ -55,7 +55,7 @@ function createWindow(): void {
   // Create the browser window.
   mainWindow = new BrowserWindow({
     width: 800,
-    height: 670,
+    height: 580,
     show: false,
     // alwaysOnTop: true,
     frame: false,

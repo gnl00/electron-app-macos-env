@@ -56,7 +56,7 @@ export const translateRequest = async (req: ITranslateRequest) => {
   return json
 }
 
-export const translateRequestWithHook = async (req: ITranslateRequest, startFetch, endFetch): Promise<any> => {
+export const translateRequestWithHook = async (req: ITranslateRequest, beforeFetch: Function, afterFetch: Function): Promise<any> => {
 
   if (!req.text) {
     console.log('translate text is empty')
@@ -75,7 +75,7 @@ export const translateRequestWithHook = async (req: ITranslateRequest, startFetc
 
   console.log('request: ', req)
 
-  startFetch()
+  beforeFetch()
 
   const jsonResponse = await fetch(req.url, {
     method: 'POST',
@@ -90,7 +90,7 @@ export const translateRequestWithHook = async (req: ITranslateRequest, startFetc
         }
       ],
       stream: false,
-      max_tokens: 512,
+      max_tokens: 1024,
       temperature: 0.7,
       top_p: 0.7,
       top_k: 50,
@@ -102,7 +102,7 @@ export const translateRequestWithHook = async (req: ITranslateRequest, startFetc
     console.log('translateRequest ERROR', err)
   })
 
-  endFetch()
+  afterFetch()
 
   return jsonResponse
 }
