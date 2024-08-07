@@ -59,7 +59,7 @@ const Home = (): JSX.Element => {
         ...config
       })
     })
-  }, [])
+  }, [appConfig])
 
   const onPinToggleClick = (): void => {
     setPinState(!pinState)
