@@ -18,3 +18,23 @@ export declare interface ITranslateRequest {
   model: string
   prompt: string
 }
+
+export declare interface IBaseResponse {
+  id: string
+  object: string
+  created: number
+  choices: Array<{
+    index: number
+    message: {
+      role: string
+      content: string
+    }
+    finish_reason: string
+  }>
+  usage: {
+    promptTokens: number
+    completionTokens: number
+    totalTokens: number
+  }
+  systemFingerprint: string
+}
