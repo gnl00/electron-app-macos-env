@@ -73,11 +73,9 @@ export const translateRequestWithHook = async (req: ITranslateRequest, beforeFet
     authorization: authorizationPreffix + req.token
   }
 
-  console.log('request: ', req)
-
   beforeFetch()
 
-  const jsonResponse = await fetch(req.url, {
+  const stream = await fetch(req.url, {
     method: 'POST',
     headers,
     body: JSON.stringify({
@@ -89,7 +87,7 @@ export const translateRequestWithHook = async (req: ITranslateRequest, beforeFet
           content: req.text
         }
       ],
-      stream: false,
+      stream: true,
       max_tokens: 1024,
       temperature: 0.7,
       top_p: 0.7,
@@ -97,12 +95,11 @@ export const translateRequestWithHook = async (req: ITranslateRequest, beforeFet
       frequency_penalty: 0.5,
       n: 1
     })
-  }).then(resp => resp.json())
-  .catch(err => {
-    console.log('translateRequest ERROR', err)
   })
+
+  const reader = stream.body?.pipeThrough(new TextDecoderStream()).getReader()
 
   afterFetch()
 
-  return jsonResponse
+  return reader
 }

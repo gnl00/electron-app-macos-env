@@ -9,6 +9,14 @@
 ## TODO
 - [x] api quetsion tooltip
 - [x] save configuration toast
-- [ ] send translate requets
-- [ ] add `translating`
-- [ ] use StreamEvent
+- [x] send translate requets
+- [x] add `translating`
+- [x] use StreamEvent
+
+## Reference
+
+- https://github.com/openai/openai-node
+
+- https://www.builder.io/blog/stream-ai-javascript
+
+- https://stackoverflow.com/questions/73547502/how-do-i-stream-openais-completion-api
