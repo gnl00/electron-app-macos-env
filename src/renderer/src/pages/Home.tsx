@@ -45,7 +45,7 @@ const Home = (): JSX.Element => {
   })
   const [translateText, setTranslateText] = useState<string>('')
   const [fetching, setFetchingState] = useState<boolean>(false)
-  const [translateResult, setTranslateResult] = useState<string>()
+  const [translateResult, setTranslateResult] = useState<string>('')
   const [defaultOpenValue, setDefaultOpenValue] = useState<string>('item-0')
 
   const { toast } = useToast()
@@ -116,7 +116,6 @@ const Home = (): JSX.Element => {
     // set result empty first
     setTranslateResult('')
 
-    console.log('translateText', translateText)
     const req: ITranslateRequest = {
       url: appConfig.api,
       text: translateText,
@@ -125,11 +124,44 @@ const Home = (): JSX.Element => {
       model: appConfig.model
     }
 
-    const result: IBaseResponse = await translateRequestWithHook(req, beforeFetch, afterFetch)
-    console.log('translate result: ', result);
+    const reader = await translateRequestWithHook(req, beforeFetch, afterFetch)
 
-    const resultText = result.choices[0].message.content
-    setTranslateResult(resultText)
+    if (!reader) {
+      return
+    }
+
+    let preResult = translateResult || ''
+    while (true) {
+      const { done, value} = await reader.read()
+  
+      if (done) {
+        break
+      }
+  
+      let eventDone = false
+      const arr = value.split('\n')
+      arr.forEach((data: any) => {
+        if (data.length === 0) return; // ignore empty message
+        if (data.startsWith(':')) return // ignore sse comment message
+        if (data === 'data: [DONE]') {
+          eventDone = true
+          return
+        }
+        const json = JSON.parse(data.substring(('data:'.length + 1))) // stream response with a "data:" prefix
+        const resultText = json.choices[0].delta.content
+        // console.log(preResult += resultText || '')
+        setTranslateResult(preResult += resultText || '')
+      })
+  
+      if (eventDone) {
+        break
+      }
+    }
+    // const result: IBaseResponse = await translateRequestWithHook(req, beforeFetch, afterFetch)
+    // console.log('translate result: ', result);
+
+    // const resultText = result.choices[0].message.content
+    // setTranslateResult(resultText)
 
     // just...not work
     setDefaultOpenValue('item-0')
