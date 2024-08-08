@@ -27,13 +27,6 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@renderer/components/ui/tooltip"
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@renderer/components/ui/select"
 import { useEffect, useRef, useState } from 'react'
 import { PIN_WINDOW, GET_CONFIG, OPEN_EXTERNAL, SAVE_CONFIG } from '@constants/index'
 import { IAppConfig, ITranslateRequest } from '@types.d/index'
@@ -102,12 +95,12 @@ const Home = (): JSX.Element => {
     })
   }
 
-  const onTokenQuestionClick = (): void => {
+  const onTokenQuestionClick = (url: string): void => {
     console.log('token question click');
     
     // window.electron.ipcRenderer.openex
     // shell.openExternal('www.baidu.com')
-    window.electron.ipcRenderer.invoke(OPEN_EXTERNAL, 'https://cloud.siliconflow.cn/account/ak')
+    window.electron.ipcRenderer.invoke(OPEN_EXTERNAL, url)
   }
 
   const onTranslateTextChange = (evt) => {
@@ -198,11 +191,11 @@ const Home = (): JSX.Element => {
                   <p className="text-sm text-muted-foreground">Set the prefernces for the TEApp</p>
                 </div>
                 <div className="grid gap-2">
-                <div className="grid grid-cols-3 items-center gap-4">
+                <div className="grid grid-cols-4 items-center gap-4">
                     <Label htmlFor="api">API</Label>
                     <Input
                       id="api"
-                      className="col-span-2 h-8 text-xs"
+                      className="col-span-3 h-8 text-xs"
                       defaultValue={appConfig?.api}
                       placeholder="server:port/chat/v1/x"
                       onChange={(event) =>
@@ -210,20 +203,35 @@ const Home = (): JSX.Element => {
                       }
                     />
                   </div>
-                  <div className="grid grid-cols-3 items-center gap-4">
-                    <Label htmlFor="api">Model</Label>
-                    <Select>
-                      <SelectTrigger className="w-full">
-                        <SelectValue placeholder="Select model" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="model1">model1</SelectItem>
-                        <SelectItem value="model2">model2</SelectItem>
-                        <SelectItem value="model3">model3</SelectItem>
-                      </SelectContent>
-                    </Select>
+                  <div className="grid grid-cols-4 items-center gap-4">
+                    <Label htmlFor="model">
+                      <span>
+                        Model
+                        <Button size={'round'} variant={'ghost'}>
+                          <TooltipProvider>
+                            <Tooltip>
+                              {/* asChild fix validateDOMNesting(...): <button> cannot appear as a descendant of <button>. */}
+                              <TooltipTrigger asChild>
+                                <QuestionMarkCircledIcon></QuestionMarkCircledIcon>
+                              </TooltipTrigger>
+                              <TooltipContent>
+                                <p>Default model from <strong className='underline' onClick={(_) => onTokenQuestionClick('https://docs.siliconflow.cn/docs/model-names')}>SiliconFlow</strong></p>
+                              </TooltipContent>
+                            </Tooltip>
+                          </TooltipProvider>
+                        </Button>
+                      </span>
+                    </Label>
+                    <Input
+                      id="model"
+                      className="col-span-3 h-8 text-xs"
+                      defaultValue={appConfig?.model}
+                      onChange={(event) =>
+                        onConfigurationsChange({ ...appConfig, model: event.target.value })
+                      }
+                    />
                   </div>
-                  <div className="grid grid-cols-3 items-center gap-4">
+                  <div className="grid grid-cols-4 items-center gap-4">
                     <Label htmlFor="token">
                       <span>
                         Token
@@ -232,10 +240,10 @@ const Home = (): JSX.Element => {
                             <Tooltip>
                               {/* asChild fix validateDOMNesting(...): <button> cannot appear as a descendant of <button>. */}
                               <TooltipTrigger asChild>
-                                <QuestionMarkCircledIcon onClick={onTokenQuestionClick}></QuestionMarkCircledIcon>
+                                <QuestionMarkCircledIcon></QuestionMarkCircledIcon>
                               </TooltipTrigger>
                               <TooltipContent>
-                                <p>Click to get token from <strong>SiliconFlow</strong></p>
+                                <p>Default token from <strong className='underline' onClick={(_) => onTokenQuestionClick('https://cloud.siliconflow.cn/account/ak')}>SiliconFlow</strong></p>
                               </TooltipContent>
                             </Tooltip>
                           </TooltipProvider>
@@ -246,17 +254,17 @@ const Home = (): JSX.Element => {
                       id="token"
                       placeholder="Please input your token"
                       defaultValue={appConfig?.token}
-                      className="col-span-2 h-8"
+                      className="col-span-3 h-8"
                       onChange={(event) =>
                         onConfigurationsChange({ ...appConfig, token: event.target.value })
                       }
                     />
                   </div>
-                  <div className="grid grid-cols-3 items-center gap-4">
-                    <Label htmlFor="prompt">Translate Prompt</Label>
+                  <div className="grid grid-cols-4 items-center gap-4">
+                    <Label htmlFor="prompt">Prompt</Label>
                     <Textarea
                       id="prompt"
-                      className="col-span-2 h-8 text-xs"
+                      className="col-span-3 h-8 text-xs"
                       defaultValue={appConfig?.prompt}
                       onChange={(event) =>
                         onConfigurationsChange({ ...appConfig, prompt: event.target.value })
@@ -276,7 +284,7 @@ const Home = (): JSX.Element => {
         </div>
         <Separator style={{ margin: '10px 0' }} />
         <div className="app-undragable flex w-full items-end space-x-2">
-          <Textarea onChange={onTranslateTextChange} className="bg-slate-50" placeholder="Translate context" />
+          <Textarea onChange={onTranslateTextChange} className="bg-slate-50 text-lg" placeholder="Translate context" />
           <Button size="sm" type="submit" onClick={onSubmitClick}>
             Submit
           </Button>
