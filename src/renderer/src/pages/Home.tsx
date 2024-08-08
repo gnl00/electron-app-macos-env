@@ -53,6 +53,7 @@ const Home = (): JSX.Element => {
 
   useEffect(() => {
     // get config from main
+    console.log('loading config')
     window.electron.ipcRenderer.invoke(GET_CONFIG).then((config: IAppConfig) => {
       // console.log('got from main: ', config)
       setAppConfig({
@@ -60,7 +61,7 @@ const Home = (): JSX.Element => {
         ...config
       })
     })
-  }, [appConfig])
+  }, [])
 
   useEffect(() => {
     // auto scroll to the end
@@ -74,7 +75,7 @@ const Home = (): JSX.Element => {
     window.electron.ipcRenderer.invoke(PIN_WINDOW, !pinState)
   }
 
-  const onConfigurationsChange = (config): void => {
+  const onConfigurationsChange = (config: IAppConfig): void => {
     setAppConfig({
       ...appConfig,
         ...config
@@ -127,7 +128,7 @@ const Home = (): JSX.Element => {
       text: translateText,
       token: appConfig.token,
       prompt: appConfig.prompt,
-      model: appConfig.model
+      model: appConfig?.model
     }
 
     const reader = await translateRequestWithHook(req, beforeFetch, afterFetch)
