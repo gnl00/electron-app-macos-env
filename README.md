@@ -12,6 +12,8 @@
 - [x] send translate requets
 - [x] add `translating`
 - [x] use StreamEvent
+- [ ] siliconflow model select
+- [ ] api provider select
 
 ## Reference
 
