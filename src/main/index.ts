@@ -39,8 +39,14 @@ function handleConfig(): void {
 }
 
 const saveConfig = (configData: IAppConfig): void => {
-  console.log('configurations saving:', configData)
-  fs.writeFileSync(configFile, JSON.stringify({ ...defaultConfig, ...configData }, null, 2))
+  const mergedConfig: IAppConfig = {
+    ...defaultConfig, 
+    ...configData 
+  }
+  
+  console.log('saving merged config: \n', mergedConfig)
+  
+  fs.writeFileSync(configFile, JSON.stringify(mergedConfig, null, 2))
   console.log('configurations save success')
 }
 
