@@ -27,9 +27,9 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@renderer/components/ui/tooltip"
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { PIN_WINDOW, GET_CONFIG, OPEN_EXTERNAL, SAVE_CONFIG } from '@constants/index'
-import { IAppConfig, IBaseResponse, ITranslateRequest } from '@types.d/index'
+import { IAppConfig, ITranslateRequest } from '@types.d/index'
 import { translateRequestWithHook } from '@request/index'
 import ReactMarkdown from 'react-markdown'
 // import { useEffectOnce } from 'react-use'
@@ -47,6 +47,7 @@ const Home = (): JSX.Element => {
   const [fetching, setFetchingState] = useState<boolean>(false)
   const [translateResult, setTranslateResult] = useState<string>('')
   const [defaultOpenValue, setDefaultOpenValue] = useState<string>('item-0')
+  const scrollAreaEndRef = useRef<HTMLDivElement>(null)
 
   const { toast } = useToast()
 
@@ -60,6 +61,11 @@ const Home = (): JSX.Element => {
       })
     })
   }, [appConfig])
+
+  useEffect(() => {
+    // auto scroll to the end
+    scrollAreaEndRef.current?.scrollIntoView({behavior: 'auto'})
+  }, [translateResult])
 
   const onPinToggleClick = (): void => {
     setPinState(!pinState)
@@ -285,6 +291,7 @@ const Home = (): JSX.Element => {
                   <ReactMarkdown>
                     {translateResult}
                   </ReactMarkdown>
+                  <div ref={scrollAreaEndRef}></div>
                 </article>
               </AccordionContent>
             </AccordionItem>
