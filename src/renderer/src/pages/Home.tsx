@@ -27,6 +27,13 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@renderer/components/ui/tooltip"
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@renderer/components/ui/select"
 import { useEffect, useRef, useState } from 'react'
 import { PIN_WINDOW, GET_CONFIG, OPEN_EXTERNAL, SAVE_CONFIG } from '@constants/index'
 import { IAppConfig, ITranslateRequest } from '@types.d/index'
@@ -191,6 +198,31 @@ const Home = (): JSX.Element => {
                   <p className="text-sm text-muted-foreground">Set the prefernces for the TEApp</p>
                 </div>
                 <div className="grid gap-2">
+                <div className="grid grid-cols-3 items-center gap-4">
+                    <Label htmlFor="api">API</Label>
+                    <Input
+                      id="api"
+                      className="col-span-2 h-8 text-xs"
+                      defaultValue={appConfig?.api}
+                      placeholder="server:port/chat/v1/x"
+                      onChange={(event) =>
+                        onConfigurationsChange({ ...appConfig, api: event.target.value })
+                      }
+                    />
+                  </div>
+                  <div className="grid grid-cols-3 items-center gap-4">
+                    <Label htmlFor="api">Model</Label>
+                    <Select>
+                      <SelectTrigger className="w-full">
+                        <SelectValue placeholder="Select model" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="model1">model1</SelectItem>
+                        <SelectItem value="model2">model2</SelectItem>
+                        <SelectItem value="model3">model3</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
                   <div className="grid grid-cols-3 items-center gap-4">
                     <Label htmlFor="token">
                       <span>
@@ -203,7 +235,7 @@ const Home = (): JSX.Element => {
                                 <QuestionMarkCircledIcon onClick={onTokenQuestionClick}></QuestionMarkCircledIcon>
                               </TooltipTrigger>
                               <TooltipContent>
-                                <p>Click to get token from <strong>siliconflow</strong></p>
+                                <p>Click to get token from <strong>SiliconFlow</strong></p>
                               </TooltipContent>
                             </Tooltip>
                           </TooltipProvider>
@@ -217,18 +249,6 @@ const Home = (): JSX.Element => {
                       className="col-span-2 h-8"
                       onChange={(event) =>
                         onConfigurationsChange({ ...appConfig, token: event.target.value })
-                      }
-                    />
-                  </div>
-                  <div className="grid grid-cols-3 items-center gap-4">
-                    <Label htmlFor="api">Custom API</Label>
-                    <Input
-                      id="api"
-                      className="col-span-2 h-8 text-xs"
-                      defaultValue={appConfig?.api}
-                      placeholder="server:port/chat/v1/x"
-                      onChange={(event) =>
-                        onConfigurationsChange({ ...appConfig, api: event.target.value })
                       }
                     />
                   </div>
