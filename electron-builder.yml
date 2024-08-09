@@ -31,7 +31,6 @@ dmg:
 linux:
   target:
     - AppImage
-    - snap
     - deb
   maintainer: https://github.com/gnl00
   category: Utility
