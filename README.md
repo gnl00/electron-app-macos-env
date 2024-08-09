@@ -12,8 +12,9 @@
 - [x] send translate requets
 - [x] add `translating`
 - [x] use StreamEvent
-- [ ] siliconflow model select
-- [ ] api provider select
+~- [ ] siliconflow model select~
+~- [ ] api provider select~
+- [ ] swict source and target language
 
 ## Reference
 

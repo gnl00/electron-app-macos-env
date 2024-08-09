@@ -90,7 +90,11 @@ function createWindow(): void {
     mainWindow.loadFile(join(__dirname, '../renderer/index.html'))
   }
 
-  mainWindow.webContents.openDevTools({ mode: 'right' })
+  // @ts-ignore
+  if (import.meta.env.MODE === 'development') {
+    mainWindow.webContents.openDevTools({ mode: 'right' })
+  }
+  
 }
 
 // This method will be called when Electron has finished
