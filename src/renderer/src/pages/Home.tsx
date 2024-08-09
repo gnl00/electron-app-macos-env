@@ -29,7 +29,7 @@ import {
 } from "@renderer/components/ui/tooltip"
 import { useEffect, useRef, useState } from 'react'
 import { PIN_WINDOW, GET_CONFIG, OPEN_EXTERNAL, SAVE_CONFIG } from '@constants/index'
-import { IAppConfig, ITranslateRequest } from '@types.d/index'
+import { IAppConfig, ITranslateRequest } from '~types/index'
 import { translateRequestWithHook } from '@request/index'
 import ReactMarkdown from 'react-markdown'
 // import { useEffectOnce } from 'react-use'
