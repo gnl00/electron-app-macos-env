@@ -30,7 +30,7 @@ jobs:
         run: npm install -g pnpm && pnpm install
 
       - name: build-linux
-        if: matrix.os == 'ubuntu-latest'
+        if: matrix.os == 'ubuntu-22.04'
         run: pnpm build:linux
 
       - name: build-mac
