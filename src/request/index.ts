@@ -1,5 +1,3 @@
-import { IHeaders, ITranslateRequest } from '~types/index';
-
 const authorizationPreffix = 'Bearer '
 
 // const getHeanders: IHeaders = {}

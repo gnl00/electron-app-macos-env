@@ -17,7 +17,8 @@ export default defineConfig({
         '@renderer': resolve('src/renderer/src'),
         '@constants': resolve('src/constants'),
         '~types': resolve('src/types'),
-        '@request': resolve('src/request')
+        '@request': resolve('src/request'),
+        '@resources': resolve('resources')
       }
     },
     plugins: [react()]

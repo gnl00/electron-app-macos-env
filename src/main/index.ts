@@ -2,10 +2,9 @@ import { app, shell, BrowserWindow, ipcMain } from 'electron'
 import { join } from 'path'
 import fs from 'node:fs'
 import { electronApp, optimizer, is } from '@electron-toolkit/utils'
-import icon from '../../resources/icon.png?asset'
+import icon from '../../resources/icon.png'
 import { PIN_WINDOW, SAVE_CONFIG, GET_CONFIG, OPEN_EXTERNAL } from '../constants'
 import { defaultConfig } from '../config'
-import { IAppConfig } from '../types'
 
 let mainWindow: BrowserWindow
 let appConfig: IAppConfig

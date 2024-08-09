@@ -1,5 +1,3 @@
-import { IAppConfig } from '../types'
-
 export const defaultConfig: IAppConfig = {
   token: 'sk-your-default-token',
   api: 'https://api.siliconflow.cn/v1/chat/completions',
