@@ -1,17 +1,17 @@
-export declare interface IAppConfig {
+declare interface IAppConfig {
   token: string
   api: string // default api
   prompt: string, // default translate prompt
   model: string // default model
 }
 
-export declare interface IHeaders {
+declare interface IHeaders {
   accept?: string = 'application/json'
   authorization?: string
   'content-type'?: string
 }
 
-export declare interface ITranslateRequest {
+declare interface ITranslateRequest {
   url: string
   token: string
   text: string
@@ -19,7 +19,7 @@ export declare interface ITranslateRequest {
   prompt: string
 }
 
-export declare interface IBaseResponse {
+declare interface IBaseResponse {
   id: string
   object: string
   created: number
@@ -37,4 +37,11 @@ export declare interface IBaseResponse {
     totalTokens: number
   }
   systemFingerprint: string
+}
+
+declare module "*.types";
+
+declare module '*.png' {
+  const value: string;
+  export default value;
 }

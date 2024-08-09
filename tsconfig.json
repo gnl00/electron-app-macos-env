@@ -5,6 +5,7 @@
     "baseUrl": ".",
     "paths": {
       "@/*": ["./src/*"],
+      "@resources/*": ["./resources/*"],
       "@renderer/*": ["./src/renderer/src/*"],
       "@constants/*": ["./src/constants/*"],
       "~types/*": ["./src/types/*"],
