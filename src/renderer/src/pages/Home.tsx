@@ -184,18 +184,18 @@ const Home = (): JSX.Element => {
                 <GearIcon />
               </div>
             </PopoverTrigger>
-            <PopoverContent className="m-2 w-full app-undragable">
+            <PopoverContent className="m-2 min-w-96 app-undragable">
               <div className="grid gap-4">
                 <div className="space-y-2">
                   <h4 className="font-medium leading-none">Prefernces</h4>
                   <p className="text-sm text-muted-foreground">Set the prefernces for the TEApp</p>
                 </div>
                 <div className="grid gap-2">
-                <div className="grid grid-cols-4 items-center gap-4">
+                  <div className="grid grid-cols-4 items-center gap-4">
                     <Label htmlFor="api">API</Label>
                     <Input
                       id="api"
-                      className="col-span-3 h-8 text-xs"
+                      className="col-span-3 h-8 text-sm"
                       defaultValue={appConfig?.api}
                       placeholder="server:port/chat/v1/x"
                       onChange={(event) =>
@@ -208,14 +208,14 @@ const Home = (): JSX.Element => {
                       <span>
                         Model
                         <Button size={'round'} variant={'ghost'}>
-                          <TooltipProvider>
+                          <TooltipProvider delayDuration={100}>
                             <Tooltip>
                               {/* asChild fix validateDOMNesting(...): <button> cannot appear as a descendant of <button>. */}
                               <TooltipTrigger asChild>
                                 <QuestionMarkCircledIcon></QuestionMarkCircledIcon>
                               </TooltipTrigger>
                               <TooltipContent>
-                                <p>Default model from <strong className='underline' onClick={(_) => onTokenQuestionClick('https://docs.siliconflow.cn/docs/model-names')}>SiliconFlow</strong></p>
+                                <p>Models from <strong className='underline' onClick={(_) => onTokenQuestionClick('https://docs.siliconflow.cn/docs/model-names')}>SiliconFlow</strong></p>
                               </TooltipContent>
                             </Tooltip>
                           </TooltipProvider>
@@ -224,7 +224,7 @@ const Home = (): JSX.Element => {
                     </Label>
                     <Input
                       id="model"
-                      className="col-span-3 h-8 text-xs"
+                      className="col-span-3 h-8 text-sm"
                       defaultValue={appConfig?.model}
                       onChange={(event) =>
                         onConfigurationsChange({ ...appConfig, model: event.target.value })
@@ -236,14 +236,14 @@ const Home = (): JSX.Element => {
                       <span>
                         Token
                         <Button size={'round'} variant={'ghost'}>
-                          <TooltipProvider>
+                          <TooltipProvider delayDuration={100}>
                             <Tooltip>
                               {/* asChild fix validateDOMNesting(...): <button> cannot appear as a descendant of <button>. */}
                               <TooltipTrigger asChild>
                                 <QuestionMarkCircledIcon></QuestionMarkCircledIcon>
                               </TooltipTrigger>
                               <TooltipContent>
-                                <p>Default token from <strong className='underline' onClick={(_) => onTokenQuestionClick('https://cloud.siliconflow.cn/account/ak')}>SiliconFlow</strong></p>
+                                <p>Get token from <strong className='underline' onClick={(_) => onTokenQuestionClick('https://cloud.siliconflow.cn/account/ak')}>SiliconFlow</strong></p>
                               </TooltipContent>
                             </Tooltip>
                           </TooltipProvider>
@@ -254,17 +254,17 @@ const Home = (): JSX.Element => {
                       id="token"
                       placeholder="Please input your token"
                       defaultValue={appConfig?.token}
-                      className="col-span-3 h-8"
+                      className="col-span-3 h-8 text-sm"
                       onChange={(event) =>
                         onConfigurationsChange({ ...appConfig, token: event.target.value })
                       }
                     />
                   </div>
                   <div className="grid grid-cols-4 items-center gap-4">
-                    <Label htmlFor="prompt">Prompt</Label>
+                    <Label htmlFor="prompt"><span>Prompt</span></Label>
                     <Textarea
                       id="prompt"
-                      className="col-span-3 h-8 text-xs"
+                      className="col-span-3 h-8 text-sm"
                       defaultValue={appConfig?.prompt}
                       onChange={(event) =>
                         onConfigurationsChange({ ...appConfig, prompt: event.target.value })
