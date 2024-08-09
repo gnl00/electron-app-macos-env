@@ -33,7 +33,7 @@ linux:
     - AppImage
     - snap
     - deb
-  maintainer: electronjs.org
+  maintainer: https://github.com/gnl00
   category: Utility
 appImage:
   artifactName: ${name}-${version}.${ext}
