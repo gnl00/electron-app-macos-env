@@ -7,7 +7,7 @@
       "@/*": ["./src/*"],
       "@renderer/*": ["./src/renderer/src/*"],
       "@constants/*": ["./src/constants/*"],
-      "@types.d/*": ["./src/types/*"],
+      "~types/*": ["./src/types/*"],
       "@request/*": ["./src/request/*"]
     }
   }

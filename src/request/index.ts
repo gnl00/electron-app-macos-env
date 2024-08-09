@@ -1,4 +1,4 @@
-import { IHeaders, ITranslateRequest } from '@types.d/index';
+import { IHeaders, ITranslateRequest } from '~types/index';
 
 const authorizationPreffix = 'Bearer '
 
