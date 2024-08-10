@@ -42,7 +42,6 @@ import ReactMarkdown from 'react-markdown'
 // import { useEffectOnce } from 'react-use'
 
 const Home = (): JSX.Element => {
-
   const [pinState, setPinState] = useState<boolean>(false)
   const [appConfig, setAppConfig] = useState<IAppConfig>({
     api: 'https://api.siliconflow.cn/v1/chat/completions',
@@ -56,27 +55,28 @@ const Home = (): JSX.Element => {
   const [defaultOpenValue, setDefaultOpenValue] = useState('item-0')
   const [sourceLanguage, setSourceLanguage] = useState('中文')
   const [targetLanguage, setTargetLanguage] = useState('英文')
-  const [languagesChoise, setLanguagesChoise] = useState<Array<any>>([
+  const scrollAreaEndRef = useRef<HTMLDivElement>(null)
+
+  const languagesChoise = [
     {
       id: 1,
-      name: '中文',
-      value: 'zh',
+      name: 'zh',
+      value: '中文',
       disable: false
     },
     {
       id: 2,
-      name: '英文',
-      value: 'en',
+      name: 'en',
+      value: '英文',
       disable: false
     },
     {
       id: 3,
-      name: '日文',
-      value: 'jp',
+      name: 'jp',
+      value: '日文',
       disable: false
     }
-  ])
-  const scrollAreaEndRef = useRef<HTMLDivElement>(null)
+  ]
 
   const { toast } = useToast()
 
@@ -329,9 +329,7 @@ const Home = (): JSX.Element => {
               {
                 languagesChoise.map((item, index) => {
                   return (
-                    <>
-                      <SelectItem key={item.id} value={item.name}>{item.name}</SelectItem>
-                    </>
+                    <SelectItem key={index} value={item.value}>{item.value}</SelectItem>
                   )
                 })
               }
@@ -342,13 +340,11 @@ const Home = (): JSX.Element => {
             <SelectTrigger className="w-auto h-auto">
               <SelectValue placeholder="targetLang" />
             </SelectTrigger>
-            <SelectContent>
+            <SelectContent key='2'>
               {
                 languagesChoise.map((item, index) => {
                   return (
-                    <>
-                      <SelectItem key={btoa(index + '')} value={item.name}>{item.name}</SelectItem>
-                    </>
+                    <SelectItem key={index} value={item.value}>{item.value}</SelectItem>
                   )
                 })
               }
