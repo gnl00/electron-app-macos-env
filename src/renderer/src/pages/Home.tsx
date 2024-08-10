@@ -35,10 +35,20 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@renderer/components/ui/select"
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@renderer/components/ui/dialog"
+import { Switch } from "@renderer/components/ui/switch"
 import { useEffect, useRef, useState } from 'react'
 import { PIN_WINDOW, GET_CONFIG, OPEN_EXTERNAL, SAVE_CONFIG } from '@constants/index'
 import { translateRequestWithHook } from '@request/index'
 import ReactMarkdown from 'react-markdown'
+import { languagesChoise } from '@config/index'
 // import { useEffectOnce } from 'react-use'
 
 const Home = (): JSX.Element => {
@@ -55,28 +65,9 @@ const Home = (): JSX.Element => {
   const [defaultOpenValue, setDefaultOpenValue] = useState('item-0')
   const [sourceLanguage, setSourceLanguage] = useState('中文')
   const [targetLanguage, setTargetLanguage] = useState('英文')
+  const [useCustomePrompt, setUseCustomePrompt] = useState(false)
+  const [customPrompt, setCustomPrompt] = useState('')
   const scrollAreaEndRef = useRef<HTMLDivElement>(null)
-
-  const languagesChoise = [
-    {
-      id: 1,
-      name: 'zh',
-      value: '中文',
-      disable: false
-    },
-    {
-      id: 2,
-      name: 'en',
-      value: '英文',
-      disable: false
-    },
-    {
-      id: 3,
-      name: 'jp',
-      value: '日文',
-      disable: false
-    }
-  ]
 
   const { toast } = useToast()
 
@@ -152,7 +143,11 @@ const Home = (): JSX.Element => {
     // set result empty first
     setTranslateResult('')
 
-    const rawPrompt: string = appConfig.prompt
+    let rawPrompt: string = !useCustomePrompt ? appConfig.prompt : customPrompt
+    // as fallback, in case of switch to use custom prompt but no input
+    if (!rawPrompt) {
+      rawPrompt = appConfig.prompt
+    }
     const prompt = rawPrompt.replace(/{{sourceLang}}/g, sourceLanguage).replace(/{{targetLang}}/g, targetLanguage)
     
     const req: ITranslateRequest = {
@@ -214,6 +209,10 @@ const Home = (): JSX.Element => {
 
   const onTargetLangSelected = (lang: string) => {
     setTargetLanguage(lang)
+  }
+
+  const onPropmtSwicterChange = (value: boolean) => {
+    setUseCustomePrompt(value)
   }
 
   return (
@@ -303,15 +302,42 @@ const Home = (): JSX.Element => {
                     />
                   </div>
                   <div className="grid grid-cols-4 items-center gap-4">
-                    <Label htmlFor="prompt"><span>Prompt</span></Label>
-                    <Textarea
-                      id="prompt"
-                      className="col-span-3 h-8 text-sm"
-                      defaultValue={appConfig?.prompt}
-                      onChange={(event) =>
-                        onConfigurationsChange({ ...appConfig, prompt: event.target.value })
+                    <div className='col-span-4 flex items-center space-x-3'>
+                      <Label htmlFor="promptModeSwitcher"><span>Custom Prompt</span></Label>
+                      <Switch id='promptModeSwitcher' onCheckedChange={onPropmtSwicterChange} />
+                      {
+                        !useCustomePrompt ? <></> :
+                        <Dialog>
+                          <DialogTrigger asChild>
+                            <Button variant='outline' size='sm' className='w-24'>Edit Prompt</Button>
+                          </DialogTrigger>
+                          <DialogContent className='rounded-md w-max'>
+                            <DialogHeader className='space-y-2'>
+                              <DialogTitle>Custom prompt</DialogTitle>
+                              <DialogDescription aria-describedby={undefined} />
+                              <div className='space-y-3'>
+                                <Textarea
+                                  id="promptTextArea"
+                                  className="h-96 w-96 text-base text-slate-600"
+                                  defaultValue={customPrompt}
+                                  placeholder='Input your custom prompt here...
+                                    &#10;We offer 2 variables&#10;- {{sourceLang}}&#10;- {{targetLang}}&#10;as placeholders.
+                                    &#10;Such as: 请以简洁，幽默的语气将{{sourceLang}}准确的翻译成{{targetLang}}并按照...格式输出。'
+                                  onChange={(event) =>
+                                    onConfigurationsChange({ ...appConfig, prompt: event.target.value })
+                                  }
+                                />
+                                <div className='flex justify-end'>
+                                  <Button size='sm'>
+                                    Save prompt
+                                  </Button>
+                                </div>
+                              </div>
+                            </DialogHeader>
+                          </DialogContent>
+                        </Dialog>
                       }
-                    />
+                    </div>
                   </div>
                 </div>
                 <Button size="xs" onClick={saveConfigurationClick}>

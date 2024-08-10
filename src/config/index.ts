@@ -1,3 +1,24 @@
+export const languagesChoise = [
+  {
+    id: 1,
+    name: 'zh',
+    value: '中文',
+    disable: false
+  },
+  {
+    id: 2,
+    name: 'en',
+    value: '英文',
+    disable: false
+  },
+  {
+    id: 3,
+    name: 'jp',
+    value: '日文',
+    disable: false
+  }
+]
+
 export const defaultConfig: IAppConfig = {
   token: 'sk-your-default-token',
   api: 'https://api.siliconflow.cn/v1/chat/completions',
