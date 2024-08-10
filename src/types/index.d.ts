@@ -1,8 +1,9 @@
 declare interface IAppConfig {
   token: string
   api: string // default api
-  prompt: string, // default translate prompt
   model: string // default model
+  prompt: string, // default translate prompt
+  customPrompt?: string, // user custom prompt
 }
 
 declare interface IHeaders {
