@@ -18,6 +18,7 @@ export default defineConfig({
         '@constants': resolve('src/constants'),
         '~types': resolve('src/types'),
         '@request': resolve('src/request'),
+        '@config': resolve('src/config'),
         '@resources': resolve('resources')
       }
     },
