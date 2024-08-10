@@ -41,21 +41,6 @@ import { translateRequestWithHook } from '@request/index'
 import ReactMarkdown from 'react-markdown'
 // import { useEffectOnce } from 'react-use'
 
-const languages = [
-  {
-    name: '中文',
-    value: 'zh'
-  },
-  {
-    name: '英语',
-    value: 'en'
-  },
-  {
-    name: '日语',
-    value: 'jp'
-  }
-]
-
 const Home = (): JSX.Element => {
 
   const [pinState, setPinState] = useState<boolean>(false)
