@@ -3,7 +3,8 @@ const authorizationPreffix = 'Bearer '
 // const getHeanders: IHeaders = {}
 
 const postHeanders: IHeaders = {
-  'content-type': 'application/json'
+  'content-type': 'application/json',
+  accept: 'application/json'
 }
 
 export const translateRequest = async (req: ITranslateRequest) => {

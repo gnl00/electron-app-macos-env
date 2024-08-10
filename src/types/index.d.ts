@@ -6,7 +6,7 @@ declare interface IAppConfig {
 }
 
 declare interface IHeaders {
-  accept?: string = 'application/json'
+  accept?: string
   authorization?: string
   'content-type'?: string
 }
@@ -16,7 +16,9 @@ declare interface ITranslateRequest {
   token: string
   text: string
   model: string
-  prompt: string
+  prompt: string,
+  sourceLang: string,
+  targetLang: string
 }
 
 declare interface IBaseResponse {
@@ -43,5 +45,4 @@ declare module "*.types";
 
 declare module '*.png' {
   const value: string;
-  export default value;
 }
