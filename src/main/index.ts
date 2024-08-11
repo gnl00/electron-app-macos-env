@@ -65,7 +65,7 @@ const saveConfig = (configData: AppConfigType): void => {
 handleConfig()
 
 const pinWindow = (pin: boolean): void => {
-  console.log('main got pin state: ', pin)
+  // console.log('main got pin state: ', pin)
   mainWindow.setAlwaysOnTop(pin, 'floating')
 }
 
