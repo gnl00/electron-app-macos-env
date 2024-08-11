@@ -6,15 +6,21 @@
 ![ss-1](./screenshot/image-1.png)
 ![ss-2](./screenshot/image-2.png)
 
+## Usages
+
+macOS can not open after installed, execute the command below then run again
+
+```shell
+sudo xattr -r -d com.apple.quarantine /Applications/te-app.app
+```
+
 ## TODO
 - [x] api quetsion tooltip
 - [x] save configuration toast
 - [x] send translate requets
 - [x] add `translating`
 - [x] use StreamEvent
-~- [ ] siliconflow model select~
-~- [ ] api provider select~
-- [ ] swict source and target language
+- [x] swict source and target language
 
 ## Reference
 

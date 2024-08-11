@@ -1,9 +1,11 @@
-import { app, shell, BrowserWindow, ipcMain } from 'electron'
+import { app, shell, BrowserWindow, ipcMain, globalShortcut, clipboard } from 'electron'
 import { join } from 'path'
 import * as fs from 'node:fs'
 import { electronApp, optimizer, is } from '@electron-toolkit/utils'
+// import robot from '@jitsi/robotjs'
+// import { keyboard, Key } from '@nut-tree/nut-js'
 import icon from '../../resources/icon.png?asset'
-import { PIN_WINDOW, SAVE_CONFIG, GET_CONFIG, OPEN_EXTERNAL } from '../constants'
+import { PIN_WINDOW, SAVE_CONFIG, GET_CONFIG, OPEN_EXTERNAL, ON_COPY } from '../constants'
 import { defaultConfig as embeddedConfig } from '../config'
 
 let mainWindow: BrowserWindow
@@ -85,7 +87,32 @@ function createWindow(): void {
     }
   })
 
-  mainWindow.on('ready-to-show', () => {
+  mainWindow.on('show', async () => {
+    //console.log('on-show')
+
+    // robotjs
+    // 模拟按下 Ctrl 键（Windows/Linux）或 Cmd 键（macOS）
+    // if (process.platform === 'darwin') {
+    //   robot.keyTap('c', 'command')
+    // } else {
+    //   robot.keyTap('c', 'control')
+    // }
+
+    // nutjs
+    // keyboard.config.autoDelayMs = 300
+    // await keyboard.pressKey(Key.LeftCmd, Key.C)
+    // await keyboard.type('Clash')
+    // const cb = await nClipboard.getContent()
+    // const copiedContent = clipboard.readText()
+    // mainWindow.webContents.send(ON_COPY, copiedContent)
+  })
+
+  mainWindow.on('focus', async () => {
+    // await keyboard.pressKey(Key.LeftCmd, Key.C)
+    // console.log('on-focus')
+  })
+
+  mainWindow.on('ready-to-show', async () => {
     mainWindow.show()
   })
 
@@ -115,6 +142,13 @@ function createWindow(): void {
 app.whenReady().then(() => {
   // Set app user model id for windows
   electronApp.setAppUserModelId('com.electron')
+
+  globalShortcut.register('CommandOrControl+G', () => {
+    mainWindow.show()
+  })
+  globalShortcut.register('CommandOrControl+Esc', () => {
+    mainWindow.hide()
+  })
 
   // Default open or close DevTools by F12 in development
   // and ignore CommandOrControl + R in production.
@@ -154,6 +188,7 @@ app.on('window-all-closed', () => {
   if (process.platform !== 'darwin') {
     app.quit()
   }
+  globalShortcut.unregisterAll()
 })
 
 // In this file you can include the rest of your app"s specific main process
