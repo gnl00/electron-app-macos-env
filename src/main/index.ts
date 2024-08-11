@@ -2,48 +2,61 @@ import { app, shell, BrowserWindow, ipcMain } from 'electron'
 import { join } from 'path'
 import * as fs from 'node:fs'
 import { electronApp, optimizer, is } from '@electron-toolkit/utils'
-import icon from '../../resources/icon.png'
+import icon from '../../resources/icon.png?asset'
 import { PIN_WINDOW, SAVE_CONFIG, GET_CONFIG, OPEN_EXTERNAL } from '../constants'
-import { defaultConfig } from '../config'
+import { defaultConfig as embeddedConfig } from '../config'
 
 let mainWindow: BrowserWindow
-let appConfig: IAppConfig
+let appConfig: AppConfigType
 
 const configPath = app.getPath('userData')
 const configFile = join(configPath, 'appConfig.json')
 
 function tryInitConfig(): void {
   if (!fs.existsSync(configPath)) {
-    console.log('no local config PATH exist, creating...', configPath)
+    console.log('no local config PATH, creating...', configPath)
     fs.mkdirSync(configPath)
   }
 
   if (!fs.existsSync(configFile)) {
-    console.log('no local config FILE exist, creating...', configFile)
-    fs.writeFileSync(configFile, JSON.stringify({ ...defaultConfig }, null, 2))
+    console.log('no local config FILE, creating...', configFile)
+    const { configForUpdate, ...omitedConfig } = embeddedConfig
+    fs.writeFileSync(configFile, JSON.stringify({ ...omitedConfig }, null, 2))
   }
 }
 
 function handleConfig(): void {
   console.log('handling configurations...')
+
   tryInitConfig()
 
-  console.log('get configurations from local: ', configFile)
-  const jsonStr = fs.readFileSync(configFile).toString('utf8')
-  const configJson = JSON.parse(jsonStr)
-  if (configJson) {
-    appConfig = configJson
-    console.log('got local config', appConfig)
+  console.log('local config file\n', configFile)
+  const localConfigStr = fs.readFileSync(configFile).toString('utf8')
+  const localConfig: AppConfigType = JSON.parse(localConfigStr)
+  console.log('got local config\n', localConfig)
+  appConfig = {
+    ...localConfig
+  }
+  // update local config when default config update
+  if (!localConfig.version || embeddedConfig.version > localConfig.version) {
+    const { configForUpdate } = embeddedConfig
+    appConfig = {
+      ...appConfig,
+      ...configForUpdate
+    }
+    saveConfig(appConfig)
+    console.log('refresh local config\n', appConfig)
   }
 }
 
-const saveConfig = (configData: IAppConfig): void => {
-  const mergedConfig: IAppConfig = {
-    ...defaultConfig, 
+const saveConfig = (configData: AppConfigType): void => {
+  const { configForUpdate, ...omitedConfig } = embeddedConfig
+  const mergedConfig: AppConfigType = {
+    ...omitedConfig, 
     ...configData 
   }
   
-  console.log('saving merged config: \n', mergedConfig)
+  console.log('saving merged config\n', mergedConfig)
   
   fs.writeFileSync(configFile, JSON.stringify(mergedConfig, null, 2))
   console.log('configurations save success')
