@@ -338,7 +338,7 @@ const Home = (): JSX.Element => {
                                   defaultValue={appConfig.prompt?.custom}
                                   placeholder='Input your custom prompt here...
                                     &#10;We offer 2 variables&#10;- {{sourceLang}}&#10;- {{targetLang}}&#10;as placeholders.
-                                    &#10;Such as: 请以简洁，幽默的语气将{{sourceLang}}准确的翻译成{{targetLang}}并按照...格式输出。'
+                                    &#10;Example&#10;请以简洁，幽默的语气将{{sourceLang}}准确的翻译成{{targetLang}}并按照...格式输出。'
                                 />
                                 <DialogFooter className="justify-start">
                                   <DialogClose asChild>
