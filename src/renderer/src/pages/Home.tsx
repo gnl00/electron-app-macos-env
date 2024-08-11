@@ -70,8 +70,8 @@ const Home = (): JSX.Element => {
   const [fetching, setFetchingState] = useState<boolean>(false)
   const [translateResult, setTranslateResult] = useState('')
   const [defaultOpenValue, setDefaultOpenValue] = useState('item-0')
-  const [sourceLanguage, setSourceLanguage] = useState('中文')
-  const [targetLanguage, setTargetLanguage] = useState('英文')
+  const [sourceLanguage, setSourceLanguage] = useState('英文')
+  const [targetLanguage, setTargetLanguage] = useState('中文')
   const [useCustomePrompt, setUseCustomePrompt] = useState(false)
   const [customPrompt, setCustomPrompt] = useState('')
   const scrollAreaEndRef = useRef<HTMLDivElement>(null)
@@ -200,14 +200,9 @@ const Home = (): JSX.Element => {
         break
       }
     }
-    // const result: IBaseResponse = await translateRequestWithHook(req, beforeFetch, afterFetch)
-    // console.log('translate result: ', result);
-
-    // const resultText = result.choices[0].message.content
-    // setTranslateResult(resultText)
 
     // just...not work
-    setDefaultOpenValue('item-0')
+    // setDefaultOpenValue('item-0')
   }
 
   const onSourceLangSelected = (lang: string) => {
