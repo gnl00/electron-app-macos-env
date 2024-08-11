@@ -1,3 +1,20 @@
+// configForUpdate only work on configVersion > previous version
+const configVersion = 1.6
+export const defaultConfig: IAppConfig = {
+  token: '',
+  api: 'https://api.siliconflow.cn/v1/chat/completions',
+  model: 'Qwen/Qwen2-7B-Instruct',
+  prompt: {
+    embedded: getEmbeddedPrompt(),
+    custom: ''
+  },
+  version: configVersion,
+  configForUpdate: {
+    api: 'https://api.siliconflow.cn/v1/chat/completions/1.6',
+    version: configVersion,
+  }
+}
+
 export const languagesChoise = [
   {
     id: 1,
@@ -19,12 +36,10 @@ export const languagesChoise = [
   }
 ]
 
-export const defaultConfig: IAppConfig = {
-  token: 'sk-your-default-token',
-  api: 'https://api.siliconflow.cn/v1/chat/completions',
-  model: 'Qwen/Qwen2-7B-Instruct',
-  prompt: 
-`你将扮演两个角色，一个精通{{sourceLang}}俚语和擅长{{targetLang}}表达的翻译家； 另一个角色是一个精通{{sourceLang}}和{{targetLang}}的校对者，能够理解{{sourceLang}}的俚语、深层次意思，也同样擅长{{targetLang}}表达。
+function getEmbeddedPrompt(): string {
+  const promptText = 
+`你将扮演两个角色：
+一个精通{{sourceLang}}俚语和擅长{{targetLang}}表达的翻译家； 另一个角色是一个精通{{sourceLang}}和{{targetLang}}的校对者，能够理解{{sourceLang}}的俚语、深层次意思，也同样擅长{{targetLang}}表达。
 
 每次我都会给你一句{{sourceLang}}：
 1. 请你先作为翻译家，把它翻译成{{targetLang}}，用尽可能地道的{{targetLang}}表达。在翻译之前，你应该先提取{{sourceLang}}句子或者段落中的关键词组，先解释它们的意思，再翻译。
@@ -72,4 +87,5 @@ export const defaultConfig: IAppConfig = {
 ### 译文终稿
 {结合以上意见，最终翻译得到的译文}
 `
+  return promptText
 }

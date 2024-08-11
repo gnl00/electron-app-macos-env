@@ -1,10 +1,18 @@
-declare interface IAppConfig {
-  token: string
-  api: string // default api
-  model: string // default model
-  prompt: string, // default translate prompt
-  customPrompt?: string, // user custom prompt
+interface IPrompt {
+  embedded?: string | undefined // app embedded translate prompt
+  custom?: string // user custom prompt
 }
+
+declare interface IAppConfig {
+  token?: string
+  api?: string // default api
+  model?: string // default model
+  prompt?: IPrompt, // prompt
+  version?: number
+  configForUpdate?: IAppConfig
+}
+
+declare type AppConfigType = Omit<IAppConfig, 'configUpdate'>
 
 declare interface IHeaders {
   accept?: string
@@ -13,12 +21,12 @@ declare interface IHeaders {
 }
 
 declare interface ITranslateRequest {
-  url: string
-  token: string
+  url: string | undefined
+  token: string | undefined
+  model: string | undefined
+  prompt: string
   text: string
-  model: string
-  prompt: string,
-  sourceLang: string,
+  sourceLang: string
   targetLang: string
 }
 

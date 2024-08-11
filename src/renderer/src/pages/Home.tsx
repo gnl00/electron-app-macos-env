@@ -42,6 +42,8 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
+  DialogClose,
+  DialogFooter
 } from "@renderer/components/ui/dialog"
 import { Switch } from "@renderer/components/ui/switch"
 import { useEffect, useRef, useState } from 'react'
@@ -52,11 +54,16 @@ import { languagesChoise } from '@config/index'
 // import { useEffectOnce } from 'react-use'
 
 const Home = (): JSX.Element => {
+
+  const customPromptTextAreaRef = useRef<HTMLTextAreaElement>(null)
+
   const [pinState, setPinState] = useState<boolean>(false)
   const [appConfig, setAppConfig] = useState<IAppConfig>({
     api: 'https://api.siliconflow.cn/v1/chat/completions',
     token: '',
-    prompt: '',
+    prompt: {
+      embedded: ''
+    },
     model: 'Qwen/Qwen2-7B-Instruct'
   })
   const [translateText, setTranslateText] = useState('')
@@ -143,10 +150,10 @@ const Home = (): JSX.Element => {
     // set result empty first
     setTranslateResult('')
 
-    let rawPrompt: string = !useCustomePrompt ? appConfig.prompt : customPrompt
     // as fallback, in case of switch to use custom prompt but no input
-    if (!rawPrompt) {
-      rawPrompt = appConfig.prompt
+    let rawPrompt: string = appConfig!.prompt!.embedded!
+    if (useCustomePrompt && customPrompt) {
+      rawPrompt = customPrompt
     }
     const prompt = rawPrompt.replace(/{{sourceLang}}/g, sourceLanguage).replace(/{{targetLang}}/g, targetLanguage)
     
@@ -213,6 +220,14 @@ const Home = (): JSX.Element => {
 
   const onPropmtSwicterChange = (value: boolean) => {
     setUseCustomePrompt(value)
+  }
+
+  const onCustomPromptSave = () => {
+    if (customPromptTextAreaRef && customPromptTextAreaRef.current != null) {
+      const value = customPromptTextAreaRef.current.value
+      setCustomPrompt(value)
+      onConfigurationsChange({ ...appConfig, prompt: {...appConfig.prompt, custom: value} })
+    }
   }
 
   return (
@@ -318,20 +333,20 @@ const Home = (): JSX.Element => {
                               <div className='space-y-3'>
                                 <Textarea
                                   id="promptTextArea"
+                                  ref={customPromptTextAreaRef}
                                   className="h-96 w-96 text-base text-slate-600"
-                                  defaultValue={customPrompt}
+                                  defaultValue={appConfig.prompt?.custom}
                                   placeholder='Input your custom prompt here...
                                     &#10;We offer 2 variables&#10;- {{sourceLang}}&#10;- {{targetLang}}&#10;as placeholders.
                                     &#10;Such as: 请以简洁，幽默的语气将{{sourceLang}}准确的翻译成{{targetLang}}并按照...格式输出。'
-                                  onChange={(event) =>
-                                    onConfigurationsChange({ ...appConfig, prompt: event.target.value })
-                                  }
                                 />
-                                <div className='flex justify-end'>
-                                  <Button size='sm'>
-                                    Save prompt
-                                  </Button>
-                                </div>
+                                <DialogFooter className="justify-start">
+                                  <DialogClose asChild>
+                                    <Button onClick={onCustomPromptSave} size='sm'>
+                                      Save prompt
+                                    </Button>
+                                  </DialogClose>
+                                </DialogFooter>
                               </div>
                             </DialogHeader>
                           </DialogContent>
