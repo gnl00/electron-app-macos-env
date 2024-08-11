@@ -21,9 +21,9 @@ declare interface IHeaders {
 }
 
 declare interface ITranslateRequest {
-  url: string | undefined
-  token: string | undefined
-  model: string | undefined
+  url: string
+  token: string
+  model: string
   prompt: string
   text: string
   sourceLang: string

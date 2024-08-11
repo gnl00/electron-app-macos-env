@@ -158,11 +158,11 @@ const Home = (): JSX.Element => {
     const prompt = rawPrompt.replace(/{{sourceLang}}/g, sourceLanguage).replace(/{{targetLang}}/g, targetLanguage)
     
     const req: ITranslateRequest = {
-      url: appConfig.api,
+      url: appConfig.api!,
       text: translateText,
-      token: appConfig.token,
+      token: appConfig.token!,
       prompt: prompt,
-      model: appConfig?.model,
+      model: appConfig.model!,
       sourceLang: sourceLanguage,
       targetLang: targetLanguage
     }
