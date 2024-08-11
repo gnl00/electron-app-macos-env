@@ -38,7 +38,7 @@ function handleConfig(): void {
     ...localConfig
   }
   // update local config when default config update
-  if (!localConfig.version || embeddedConfig.version > localConfig.version) {
+  if (!localConfig.version || embeddedConfig!.version! > localConfig.version) {
     const { configForUpdate } = embeddedConfig
     appConfig = {
       ...appConfig,
