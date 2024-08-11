@@ -39,6 +39,6 @@ appImage:
 npmRebuild: false
 publish:
   provider: generic
-  url: https://example.com/auto-updates
+  url: https://github.com/gnl00/electron-app-macos-env/releases
 electronDownload:
   mirror: https://npmmirror.com/mirrors/electron/
