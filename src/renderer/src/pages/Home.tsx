@@ -202,7 +202,7 @@ const Home = (): JSX.Element => {
     }
 
     // just...not work
-    // setDefaultOpenValue('item-0')
+    setDefaultOpenValue('item-0')
   }
 
   const onSourceLangSelected = (lang: string) => {
