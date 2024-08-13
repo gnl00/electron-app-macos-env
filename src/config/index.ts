@@ -1,16 +1,18 @@
 // configForUpdate only work on configVersion > previous version
-const configVersion = 1.6
+const configVersion = 1.7
+const prompt = {
+  embedded: getEmbeddedPrompt(),
+  custom: ''
+}
 export const defaultConfig: IAppConfig = {
   token: '',
   api: 'https://api.siliconflow.cn/v1/chat/completions',
   model: 'Qwen/Qwen2-7B-Instruct',
-  prompt: {
-    embedded: getEmbeddedPrompt(),
-    custom: ''
-  },
+  prompt,
   version: configVersion,
   configForUpdate: {
-    api: 'https://api.siliconflow.cn/v1/chat/completions/1.6',
+    api: 'https://api.siliconflow.cn/v1/chat/completions',
+    prompt,
     version: configVersion,
   }
 }
