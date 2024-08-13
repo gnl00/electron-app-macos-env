@@ -2,10 +2,8 @@ import { app, shell, BrowserWindow, ipcMain, globalShortcut, clipboard } from 'e
 import { join } from 'path'
 import * as fs from 'node:fs'
 import { electronApp, optimizer, is } from '@electron-toolkit/utils'
-// import robot from '@jitsi/robotjs'
-// import { keyboard, Key } from '@nut-tree/nut-js'
 import icon from '../../resources/icon.png?asset'
-import { PIN_WINDOW, SAVE_CONFIG, GET_CONFIG, OPEN_EXTERNAL, ON_COPY } from '../constants'
+import { PIN_WINDOW, SAVE_CONFIG, GET_CONFIG, OPEN_EXTERNAL } from '../constants'
 import { defaultConfig as embeddedConfig } from '../config'
 
 let mainWindow: BrowserWindow
@@ -87,10 +85,15 @@ function createWindow(): void {
     }
   })
 
-  mainWindow.on('show', async () => {
-    //console.log('on-show')
+  mainWindow.on('ready-to-show', async () => {
+    console.log('ready to show')
+    
+  })
 
-    // robotjs
+  mainWindow.on('show', async () => {
+    console.log('on-show')
+
+    // robotjs @jitsi/robotjs
     // 模拟按下 Ctrl 键（Windows/Linux）或 Cmd 键（macOS）
     // if (process.platform === 'darwin') {
     //   robot.keyTap('c', 'command')
@@ -98,12 +101,16 @@ function createWindow(): void {
     //   robot.keyTap('c', 'control')
     // }
 
-    // nutjs
+    // nutjs @nut-tree/nut-js
     // keyboard.config.autoDelayMs = 300
-    // await keyboard.pressKey(Key.LeftCmd, Key.C)
-    // await keyboard.type('Clash')
+    // await keyboard.pressKey(Key.LeftControl, Key.C)
+    // keyboard.config.autoDelayMs = 300
+    // await keyboard.pressKey(Key.LeftControl, Key.C)
     // const cb = await nClipboard.getContent()
-    // const copiedContent = clipboard.readText()
+
+    const copiedContent = clipboard.readText()
+    console.log('got content\n', copiedContent)
+    
     // mainWindow.webContents.send(ON_COPY, copiedContent)
   })
 
