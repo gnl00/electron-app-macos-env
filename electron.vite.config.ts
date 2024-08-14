@@ -22,6 +22,9 @@ export default defineConfig({
         '@resources': resolve('resources')
       }
     },
-    plugins: [react()]
+    plugins: [react()],
+    define: {
+      '__APP_VERSION__': JSON.stringify(process.env.npm_package_version),
+    }
   }
 })

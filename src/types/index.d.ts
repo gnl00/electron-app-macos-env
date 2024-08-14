@@ -1,5 +1,6 @@
 interface IPrompt {
   embedded?: string | undefined // app embedded translate prompt
+  useCustomePrompt?: boolean
   custom?: string // user custom prompt
 }
 
