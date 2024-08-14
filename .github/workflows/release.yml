@@ -26,20 +26,24 @@ jobs:
         with:
           node-version: 20
 
+      - name: Linux pre-install dependencies
+        if: matrix.os == 'ubuntu-22.04'
+        run: sudo apt update && sudo apt install -y libx11-dev libxtst-dev libc6 libstdc++6 build-essential libpng-dev
+
       - name: Install Dependencies
-        run: npm install -g node-gyp && npm install -g node-pre-gyp && npm install -g pnpm && pnpm install
+        run: npm install -g pnpm && pnpm install && npm rebuild
 
       - name: build-linux
         if: matrix.os == 'ubuntu-22.04'
-        run: sudo apt install -y libx11-dev libxtst-dev libc6 libstdc++6 build-essential && npm rebuild && pnpm build:linux
+        run: pnpm build:linux
 
       - name: build-mac
         if: matrix.os == 'macos-latest'
-        run: npm rebuild && pnpm build:mac
+        run: pnpm build:mac
 
       - name: build-win
         if: matrix.os == 'windows-latest'
-        run: npm rebuild && pnpm build:win
+        run: pnpm build:win
 
       - name: release
         uses: softprops/action-gh-release@v1
