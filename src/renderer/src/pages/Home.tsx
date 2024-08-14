@@ -67,13 +67,14 @@ const Home = (): JSX.Element => {
     model: 'Qwen/Qwen2-7B-Instruct'
   })
   const [translateText, setTranslateText] = useState('')
-  const [fetching, setFetchingState] = useState<boolean>(false)
   const [translateResult, setTranslateResult] = useState('')
+  const [fetching, setFetchingState] = useState<boolean>(false)
   const [defaultOpenValue, setDefaultOpenValue] = useState('item-0')
   const [sourceLanguage, setSourceLanguage] = useState('英文')
   const [targetLanguage, setTargetLanguage] = useState('中文')
   const [useCustomePrompt, setUseCustomePrompt] = useState(false)
   const [customPrompt, setCustomPrompt] = useState('')
+
   const scrollAreaEndRef = useRef<HTMLDivElement>(null)
 
   const { toast } = useToast()
@@ -88,6 +89,17 @@ const Home = (): JSX.Element => {
         ...config
       })
     })
+
+    // window.electron.ipcRenderer.on(CLIPBOARD_CONTENT, (_, content) => {
+    //   console.log('got clipboard content', content);
+    //   setTranslateText(content)
+    // })
+
+    window.api.getClipboardContent((content: string) => {
+      console.log('got clipboard content', content)
+      setTranslateText(content)
+    })
+
   }, [])
 
   useEffect(() => {
@@ -393,7 +405,7 @@ const Home = (): JSX.Element => {
         </div>
         <Separator style={{ margin: '10px 0' }} />
         <div className="app-undragable flex w-full items-end space-x-2">
-          <Textarea onChange={onTranslateTextChange} className="bg-slate-50 text-lg" placeholder="Translate context" />
+          <Textarea onChange={onTranslateTextChange} defaultValue={translateText} className="bg-slate-50 text-lg" placeholder="Translate context" />
           <Button size="sm" type="submit" onClick={onSubmitClick}>
             Submit
           </Button>

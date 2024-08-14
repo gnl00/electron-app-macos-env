@@ -1,4 +1,4 @@
-name: Build/release Electron app
+name: Build/release te-app
 
 on:
   push:
@@ -27,7 +27,7 @@ jobs:
           node-version: 20
 
       - name: Install Dependencies
-        run: npm install -g pnpm && pnpm install
+        run: npm install -g pnpm && pnpm install && npm rebuild
 
       - name: build-linux
         if: matrix.os == 'ubuntu-latest'

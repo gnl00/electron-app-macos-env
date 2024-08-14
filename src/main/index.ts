@@ -2,12 +2,14 @@ import { app, shell, BrowserWindow, ipcMain, globalShortcut, clipboard } from 'e
 import { join } from 'path'
 import * as fs from 'node:fs'
 import { electronApp, optimizer, is } from '@electron-toolkit/utils'
+import * as robot from 'robotjs'
 import icon from '../../resources/icon.png?asset'
-import { PIN_WINDOW, SAVE_CONFIG, GET_CONFIG, OPEN_EXTERNAL } from '../constants'
+import { PIN_WINDOW, SAVE_CONFIG, GET_CONFIG, OPEN_EXTERNAL, CLIPBOARD_CONTENT } from '../constants'
 import { defaultConfig as embeddedConfig } from '../config'
 
 let mainWindow: BrowserWindow
 let appConfig: AppConfigType
+let selectedText: string
 
 const configPath = app.getPath('userData')
 const configFile = join(configPath, 'appConfig.json')
@@ -65,7 +67,6 @@ const saveConfig = (configData: AppConfigType): void => {
 handleConfig()
 
 const pinWindow = (pin: boolean): void => {
-  // console.log('main got pin state: ', pin)
   mainWindow.setAlwaysOnTop(pin, 'floating')
 }
 
@@ -82,46 +83,22 @@ function createWindow(): void {
     webPreferences: {
       preload: join(__dirname, '../preload/index.js'),
       sandbox: false
+      // Currently, electron-vite not support nodeIntegration. 
+      // nodeIntegration: true,
+      // contextIsolation: true
     }
-  })
-
-  mainWindow.on('ready-to-show', async () => {
-    console.log('ready to show')
-    
-  })
-
-  mainWindow.on('show', async () => {
-    console.log('on-show')
-
-    // robotjs @jitsi/robotjs
-    // 模拟按下 Ctrl 键（Windows/Linux）或 Cmd 键（macOS）
-    // if (process.platform === 'darwin') {
-    //   robot.keyTap('c', 'command')
-    // } else {
-    //   robot.keyTap('c', 'control')
-    // }
-
-    // nutjs @nut-tree/nut-js
-    // keyboard.config.autoDelayMs = 300
-    // await keyboard.pressKey(Key.LeftControl, Key.C)
-    // keyboard.config.autoDelayMs = 300
-    // await keyboard.pressKey(Key.LeftControl, Key.C)
-    // const cb = await nClipboard.getContent()
-
-    const copiedContent = clipboard.readText()
-    console.log('got content\n', copiedContent)
-    
-    // mainWindow.webContents.send(ON_COPY, copiedContent)
-  })
-
-  mainWindow.on('focus', async () => {
-    // await keyboard.pressKey(Key.LeftCmd, Key.C)
-    // console.log('on-focus')
   })
 
   mainWindow.on('ready-to-show', async () => {
     mainWindow.show()
   })
+
+  // mainWindow.on('show', async () => {
+  // })
+
+  // mainWindow.on('focus', async () => {
+  //   console.log('on-focus')
+  // })
 
   // mainWindow.webContents.setWindowOpenHandler((details) => {
   //   shell.openExternal(details.url)
@@ -143,6 +120,29 @@ function createWindow(): void {
   
 }
 
+const getSelectedAndShow = () => {
+    // press Ctrl(Windows/Linux) or Cmd (macOS) + C
+    // need to press twice, otherwise the content is not copied
+    if (process.platform === 'darwin') {
+      robot.keyTap('c', 'command')
+      robot.keyTap('c', 'command')
+    } else {
+      robot.keyTap('c', 'control')
+      robot.keyTap('c', 'control')
+    }
+
+    setTimeout(() => {
+      const copiedContent = clipboard.readText()
+      if (!copiedContent) {
+        return
+      }
+      selectedText = copiedContent
+      // console.log('main got clipboard content\n', selectedText)
+      mainWindow.webContents.send(CLIPBOARD_CONTENT, selectedText)
+      mainWindow.show()
+    }, 200);
+}
+
 // This method will be called when Electron has finished
 // initialization and is ready to create browser windows.
 // Some APIs can only be used after this event occurs.
@@ -151,9 +151,9 @@ app.whenReady().then(() => {
   electronApp.setAppUserModelId('com.electron')
 
   globalShortcut.register('CommandOrControl+G', () => {
-    mainWindow.show()
+    getSelectedAndShow()
   })
-  globalShortcut.register('CommandOrControl+Esc', () => {
+  globalShortcut.register('c+Esc', () => {
     mainWindow.hide()
   })
 
@@ -173,6 +173,7 @@ app.whenReady().then(() => {
   ipcMain.handle(PIN_WINDOW, (_, pinState) => pinWindow(pinState))
   ipcMain.handle(SAVE_CONFIG, (_, config) => saveConfig(config))
   ipcMain.handle(GET_CONFIG, (): IAppConfig => appConfig)
+  ipcMain.handle(CLIPBOARD_CONTENT, (): string => selectedText)
   ipcMain.handle(OPEN_EXTERNAL, (_, url) => {
     console.log('main received url', url);
     shell.openExternal(url)
