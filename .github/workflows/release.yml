@@ -31,19 +31,19 @@ jobs:
         run: sudo apt update && sudo apt install -y libx11-dev libxtst-dev libc6 libstdc++6 build-essential libpng-dev
 
       - name: Install Dependencies
-        run: npm install -g pnpm && pnpm install && npm rebuild
+        run: npm install && npm rebuild
 
       - name: build-linux
         if: matrix.os == 'ubuntu-22.04'
-        run: pnpm build:linux
+        run: npm build:linux
 
       - name: build-mac
         if: matrix.os == 'macos-latest'
-        run: pnpm build:mac
+        run: npm build:mac
 
       - name: build-win
         if: matrix.os == 'windows-latest'
-        run: pnpm build:win
+        run: npm build:win
 
       - name: release
         uses: softprops/action-gh-release@v1
