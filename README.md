@@ -2,9 +2,11 @@
 
 > Demo of te-app(translate english app)
 
+
 ## ScreenShot
 ![ss-1](./screenshot/image-1.png)
 ![ss-2](./screenshot/image-2.png)
+
 
 ## Usages
 
@@ -13,6 +15,7 @@ macOS can not open after installed, execute the command below then run again
 ```shell
 sudo xattr -r -d com.apple.quarantine /Applications/te-app.app
 ```
+
 
 ## Build
 
@@ -42,6 +45,7 @@ pnpm build:win
 pnpm build:mac
 ```
 
+
 ## TODO
 - [x] api quetsion tooltip
 - [x] save configuration toast
@@ -51,6 +55,9 @@ pnpm build:mac
 - [x] custom prompt support
 - [x] swict source and target language
 - [x] selected text listening
+- [x] add `translating` status
+- [x] add shortcut key: CmdOrCtrl+G show window, CmdOrCtrl+Esc hide window
+
 
 ## Reference
 

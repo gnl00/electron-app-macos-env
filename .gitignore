@@ -4,3 +4,4 @@ out
 .DS_Store
 *.log*
 .pnpm-store
+node_modules*
