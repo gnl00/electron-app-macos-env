@@ -54,7 +54,7 @@ jobs:
 
       - name: build-win
         if: matrix.os == 'windows-latest'
-        run: npm u && npm run build:win
+        run: npm up && npm run build:win
 
       - name: release
         uses: softprops/action-gh-release@v1
