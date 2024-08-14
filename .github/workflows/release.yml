@@ -35,15 +35,15 @@ jobs:
 
       - name: build-linux
         if: matrix.os == 'ubuntu-22.04'
-        run: npm build:linux
+        run: npm run build:linux
 
       - name: build-mac
         if: matrix.os == 'macos-latest'
-        run: npm build:mac
+        run: npm run build:mac
 
       - name: build-win
         if: matrix.os == 'windows-latest'
-        run: npm build:win
+        run: npm run build:win
 
       - name: release
         uses: softprops/action-gh-release@v1
