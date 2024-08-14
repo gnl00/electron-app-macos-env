@@ -1,8 +1,7 @@
 // configForUpdate only work on configVersion > previous version
-const configVersion = 1.7
+const configVersion = 1.8
 const prompt = {
-  embedded: getEmbeddedPrompt(),
-  custom: ''
+  embedded: getEmbeddedPrompt()
 }
 export const defaultConfig: IAppConfig = {
   token: '',
@@ -11,8 +10,8 @@ export const defaultConfig: IAppConfig = {
   prompt,
   version: configVersion,
   configForUpdate: {
-    api: 'https://api.siliconflow.cn/v1/chat/completions',
     prompt,
+    model: 'THUDM/glm-4-9b-chat',
     version: configVersion,
   }
 }

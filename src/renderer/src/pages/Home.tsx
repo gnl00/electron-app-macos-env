@@ -55,6 +55,9 @@ import { languagesChoise } from '@config/index'
 
 const Home = (): JSX.Element => {
 
+  // @ts-ignore
+  const appVersion = __APP_VERSION__
+
   const customPromptTextAreaRef = useRef<HTMLTextAreaElement>(null)
 
   const [pinState, setPinState] = useState<boolean>(false)
@@ -88,6 +91,8 @@ const Home = (): JSX.Element => {
         ...appConfig,
         ...config
       })
+      setUseCustomePrompt(config?.prompt?.useCustomePrompt || false)
+      setCustomPrompt(config?.prompt?.custom || '')
     })
 
     // window.electron.ipcRenderer.on(CLIPBOARD_CONTENT, (_, content) => {
@@ -227,13 +232,14 @@ const Home = (): JSX.Element => {
 
   const onPropmtSwicterChange = (value: boolean) => {
     setUseCustomePrompt(value)
+    onConfigurationsChange({...appConfig, prompt: {...appConfig.prompt, useCustomePrompt: value}})
   }
 
   const onCustomPromptSave = () => {
     if (customPromptTextAreaRef && customPromptTextAreaRef.current != null) {
       const value = customPromptTextAreaRef.current.value
       setCustomPrompt(value)
-      onConfigurationsChange({ ...appConfig, prompt: {...appConfig.prompt, custom: value} })
+      onConfigurationsChange({ ...appConfig, prompt: {...appConfig.prompt, custom: value}})
     }
   }
 
@@ -249,8 +255,8 @@ const Home = (): JSX.Element => {
             </PopoverTrigger>
             <PopoverContent className="m-2 min-w-96 app-undragable">
               <div className="grid gap-4">
-                <div className="space-y-2">
-                  <h4 className="font-medium leading-none">Prefernces</h4>
+                <div className="space-y-2 select-none">
+                  <h4 className="font-medium leading-none space-x-2"><span>TEApp</span><Badge variant="secondary" className='bg-slate-100'>{appVersion}</Badge></h4>
                   <p className="text-sm text-muted-foreground">Set the prefernces for the TEApp</p>
                 </div>
                 <div className="grid gap-2">
@@ -326,7 +332,7 @@ const Home = (): JSX.Element => {
                   <div className="grid grid-cols-4 items-center gap-4">
                     <div className='col-span-4 flex items-center space-x-3'>
                       <Label htmlFor="promptModeSwitcher"><span>Custom Prompt</span></Label>
-                      <Switch id='promptModeSwitcher' onCheckedChange={onPropmtSwicterChange} />
+                      <Switch id='promptModeSwitcher' defaultChecked={useCustomePrompt} onCheckedChange={onPropmtSwicterChange} />
                       {
                         !useCustomePrompt ? <></> :
                         <Dialog>
@@ -335,7 +341,7 @@ const Home = (): JSX.Element => {
                           </DialogTrigger>
                           <DialogContent className='rounded-md w-max'>
                             <DialogHeader className='space-y-2'>
-                              <DialogTitle>Custom prompt</DialogTitle>
+                              <DialogTitle className='select-none'>Custom prompt</DialogTitle>
                               <DialogDescription aria-describedby={undefined} />
                               <div className='space-y-3'>
                                 <Textarea
@@ -348,6 +354,7 @@ const Home = (): JSX.Element => {
                                     &#10;Example&#10;请以简洁，幽默的语气将{{sourceLang}}准确的翻译成{{targetLang}}并按照...格式输出。'
                                 />
                                 <DialogFooter className="justify-start">
+                                  <p className='text-xs text-slate-500 select-none pt-2'>Remember to save the prompt</p>
                                   <DialogClose asChild>
                                     <Button onClick={onCustomPromptSave} size='sm'>
                                       Save prompt
@@ -360,6 +367,9 @@ const Home = (): JSX.Element => {
                         </Dialog>
                       }
                     </div>
+                  </div>
+                  <div className="grid grid-cols-4 items-center gap-4">
+                    <p className='text-xs text-slate-500 col-span-4 select-none'>Everytime you change the configurations, you need to save it.</p>
                   </div>
                 </div>
                 <Button size="xs" onClick={saveConfigurationClick}>
