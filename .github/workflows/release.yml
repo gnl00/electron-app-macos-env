@@ -35,7 +35,7 @@ jobs:
 
       - name: install-dependencies-win
         if: matrix.os == 'windows-latest'
-        run: npm install -g windows-build-tools && pnpm install
+        run: npm install -g windows-build-tools && npm install
 
       - name: install-dependencies-mac-or-linix
         if: matrix.os == 'macos-latest' || matrix.os == 'ubuntu-22.04'
@@ -54,7 +54,7 @@ jobs:
 
       - name: build-win
         if: matrix.os == 'windows-latest'
-        run: npm up && npm run build:win
+        run: npm run build:win
 
       - name: release
         uses: softprops/action-gh-release@v1
