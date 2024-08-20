@@ -70,6 +70,7 @@ const Home = (): JSX.Element => {
     model: 'Qwen/Qwen2-7B-Instruct'
   })
   const [translateText, setTranslateText] = useState('')
+  const [markdownResultKey, setMarkdownResultKey] = useState(new Date().getTime())
   const [translateResult, setTranslateResult] = useState('')
   const [fetching, setFetchingState] = useState<boolean>(false)
   const [defaultOpenValue, setDefaultOpenValue] = useState('item-0')
@@ -78,6 +79,7 @@ const Home = (): JSX.Element => {
   const [useCustomePrompt, setUseCustomePrompt] = useState(false)
   const [customPrompt, setCustomPrompt] = useState('')
 
+  const markdownResultRef = useRef<HTMLDivElement>(null)
   const scrollAreaEndRef = useRef<HTMLDivElement>(null)
 
   const { toast } = useToast()
@@ -110,6 +112,8 @@ const Home = (): JSX.Element => {
   useEffect(() => {
     // auto scroll to the end
     scrollAreaEndRef.current?.scrollIntoView({behavior: 'auto'})
+    //update markdown result key
+    setMarkdownResultKey(new Date().getTime())
   }, [translateResult])
 
   const onPinToggleClick = (): void => {
@@ -165,7 +169,13 @@ const Home = (): JSX.Element => {
     }
 
     // set result empty first
-    setTranslateResult('')
+    if (translateResult) {
+      setTranslateResult('')
+      setMarkdownResultKey(new Date().getTime())
+      if (markdownResultRef && markdownResultRef.current != null) {
+        markdownResultRef.current.innerHTML = ''
+      }
+    }
 
     // as fallback, in case of switch to use custom prompt but no input
     let rawPrompt: string = appConfig!.prompt!.embedded!
@@ -190,7 +200,7 @@ const Home = (): JSX.Element => {
       return
     }
 
-    let preResult = translateResult || ''
+    let preResult = ''
     while (true) {
       const { done, value} = await reader.read()
   
@@ -448,10 +458,12 @@ const Home = (): JSX.Element => {
               </AccordionTrigger>
               <AccordionContent>
                 <article className="prose lg:prose-xl">
-                  <ReactMarkdown>
-                    {translateResult}
-                  </ReactMarkdown>
-                  <div ref={scrollAreaEndRef}></div>
+                  <div id="markdownResult" ref={markdownResultRef} key={markdownResultKey}>
+                    <ReactMarkdown>
+                      {translateResult}
+                    </ReactMarkdown>
+                  </div>
+                  <div id="scrollAreaEnd" ref={scrollAreaEndRef}></div>
                 </article>
               </AccordionContent>
             </AccordionItem>
