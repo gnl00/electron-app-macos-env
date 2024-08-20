@@ -34,6 +34,7 @@ linux:
     - deb
   maintainer: https://github.com/gnl00
   category: Utility
+  icon: build/icon.icns
 appImage:
   artifactName: ${name}-${version}.${ext}
 npmRebuild: false

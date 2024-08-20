@@ -50,10 +50,3 @@ declare interface IBaseResponse {
   }
   systemFingerprint: string
 }
-
-declare module "*.types";
-
-declare module '*.png' {
-  const value: string;
-  export default value
-}
