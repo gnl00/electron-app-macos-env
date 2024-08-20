@@ -35,7 +35,7 @@ jobs:
 
       - name: install-dependencies-win
         if: matrix.os == 'windows-latest'
-        run: npm install -g node-gyp && npm install && npm i -g @rollup/rollup-win32-x64-msvc
+        run: npm install -g node-gyp && npm install
 
       - name: install-dependencies-mac-or-linix
         if: matrix.os == 'macos-latest' || matrix.os == 'ubuntu-22.04'
@@ -54,7 +54,7 @@ jobs:
 
       - name: build-win
         if: matrix.os == 'windows-latest'
-        run: pnpm build:win
+        run: npm up && pnpm build:win
 
       - name: release
         uses: softprops/action-gh-release@v1
