@@ -35,7 +35,7 @@ jobs:
 
       - name: install-dependencies-win
         if: matrix.os == 'windows-latest'
-        run: npm install -g node-gyp && npm install -g windows-build-tools && npm install
+        run: npm install -g node-gyp && npm install
 
       - name: install-dependencies-mac-or-linix
         if: matrix.os == 'macos-latest' || matrix.os == 'ubuntu-22.04'
