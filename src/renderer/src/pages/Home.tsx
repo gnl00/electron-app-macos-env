@@ -425,7 +425,7 @@ const Home = (): JSX.Element => {
         </div>
         <Separator style={{ margin: '10px 0' }} />
         <div className="app-undragable flex w-full items-end space-x-2">
-          <Textarea onChange={onTranslateTextChange} defaultValue={translateText} className="bg-slate-50 text-lg" placeholder="Translate context" />
+          <Textarea onChange={onTranslateTextChange} defaultValue={translateText} value={translateText} className="bg-slate-50 text-lg" placeholder="Translate context" />
           <Button size="sm" type="submit" onClick={onSubmitClick}>
             Submit
           </Button>
