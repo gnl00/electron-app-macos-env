@@ -450,7 +450,7 @@ const Home = (): JSX.Element => {
             </>
           }
         </div>
-        <ScrollArea className="app-undragable h-96 w-full rounded-md border p-4">
+        <ScrollArea className="app-undragable h-[23.5rem] w-full rounded-md border p-4">
           <Accordion type="single" defaultValue={defaultOpenValue} collapsible>
             <AccordionItem value="item-0">
               <AccordionTrigger>
